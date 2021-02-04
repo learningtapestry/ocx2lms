@@ -1,0 +1,15 @@
+[submodule "lcms/lcms-engine"]
+	path = lcms/lcms-engine
+	url = git@github.com:learningtapestry/lcms-engine.git
+[submodule "lcms/lt-google-api"]
+	path = lcms/lt-google-api
+	url = git@github.com:learningtapestry/lt-google-api
+[submodule "lcms/lt-lcms"]
+	path = lcms/lt-lcms
+	url = git@github.com:learningtapestry/lt-lcms
+[submodule "lcms/odell_lesson_compiler"]
+	path = lcms/odell_lesson_compiler
+	url = git@github.com:learningtapestry/odell_lesson_compiler
+[submodule "lcms/odell-lcms"]
+	path = lcms/odell-lcms
+	url = git@github.com:learningtapestry/odell-lcms
