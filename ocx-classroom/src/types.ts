@@ -1,5 +1,6 @@
 import type { User as SessionUser } from "next-auth";
-import type { SessionBase } from "next-auth/_utils";
+import type { SessionBase, GenericObject } from "next-auth/_utils";
+import { classroom_v1 } from "googleapis";
 
 interface User extends SessionUser {
   id?: number | null;
@@ -17,9 +18,6 @@ interface AuthPayload {
   error?: string;
 }
 
-interface Course {
-  id?: string | null;
-  name?: string | null;
-}
+interface Course extends classroom_v1.Schema$Course {}
 
-export type { AuthPayload, Session, User, Course };
+export type { AuthPayload, Session, User, Course, GenericObject };

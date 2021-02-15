@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { InitOptions } from "next-auth";
-import type { GenericObject } from "next-auth/_utils";
-import type { Session, User } from "src/types";
+import type { Session, User, GenericObject } from "src/types";
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import Adapters from "next-auth/adapters";

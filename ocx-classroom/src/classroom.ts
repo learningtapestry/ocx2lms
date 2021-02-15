@@ -17,3 +17,9 @@ export const listCourses = async (session: Session): Promise<Course[]> => {
   const resp = await classroom.courses.list();
   return resp.data.courses || [];
 };
+
+export const createCourse = async (session: Session, course: Course): Promise<Course> => {
+  const classroom = await googleClassroom(session);
+  const resp = await classroom.courses.create({ requestBody: course });
+  return resp.data;
+};
