@@ -4,11 +4,10 @@ import { listCourses } from "src/classroom";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
-  listCourses(session)
-    .then((courses) => {
-      res.status(200).json({ courses });
-    })
-    .catch(() => {
-      res.status(422).json({ error: "Failed to fetch courses" });
-    });
+  try {
+    const courses = await listCourses(session);
+    res.status(200).json({ courses });
+  } catch (_e) {
+    res.status(422).json({ error: "Failed to fetch courses" });
+  }
 };
