@@ -1,0 +1,4 @@
+dir_path=$(dirname $(realpath $0))
+
+node -r $dir_path/prisma_console.js
+
