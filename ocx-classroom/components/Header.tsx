@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/client";
-import styles from "styles/App.module.css";
+import { Box, Flex, Text, Button } from "@chakra-ui/react";
+import { GenericObject } from "src/types";
 
 const Header = ({ title }) => {
   const [session, _loading] = useSession();
@@ -13,28 +14,29 @@ const Header = ({ title }) => {
   };
 
   return (
-    <header>
-      <div className={styles.nav}>
-        <div className={styles.navTitle}>
-          <Link href="/">{title}</Link>
-        </div>
-        <ul>
-          {session ? (
-            <>
-              <span className={styles.navUser}>Welcome, {session.user?.name}</span>
-              <li className={styles.navItem}>
-                <a onClick={onSignOut}>Sign Out</a>
-              </li>
-            </>
-          ) : (
-            <li className={styles.navItem}>
-              <a onClick={onSignIn}>Sign In</a>
-            </li>
-          )}
-        </ul>
-      </div>
-    </header>
+    <Flex as="nav" bg="gray.600" color="whiteAlpha.700" px="5" py="2">
+      <Box fontWeight="bold">
+        <Link href="/">{title}</Link>
+      </Box>
+      <Box flex="1"></Box>
+      <Box>
+        {session ? (
+          <>
+            <Text as="span">Welcome, {session.user?.name}</Text>
+            <HeaderBtn onClick={onSignOut} label="Sign Out" />
+          </>
+        ) : (
+          <HeaderBtn onClick={onSignIn} label="Sign In" />
+        )}
+      </Box>
+    </Flex>
   );
 };
+
+const HeaderBtn = (props: GenericObject) => (
+  <Button as="a" size="sm" colorScheme="blackAlpha" ml="5" {...props}>
+    {props.label}
+  </Button>
+);
 
 export default Header;

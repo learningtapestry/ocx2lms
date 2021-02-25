@@ -4,19 +4,24 @@ import type { Session, User, GenericObject } from "src/types";
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import Adapters from "next-auth/adapters";
-import { PrismaClient } from "@prisma/client";
+import getPrismaClient from "src/getPrismaClient";
 
 const SCOPES = [
   "https://www.googleapis.com/auth/userinfo.email",
   "https://www.googleapis.com/auth/userinfo.profile",
-  "https://www.googleapis.com/auth/classroom.courses"
+  "https://www.googleapis.com/auth/classroom.courses",
+  // "coursework.me" for user=student and "coursework.students" for user=teacher
+  "https://www.googleapis.com/auth/classroom.coursework.students"
 ];
+// https://www.googleapis.com/auth/classroom.student-submissions.students
+// https://www.googleapis.com/auth/classroom.student-submissions.me
+// https://www.googleapis.com/auth/homeroom
 
 const AUTHORIZATION_URL =
   "https://accounts.google.com/o/oauth2/v2/auth" +
   "?prompt=consent&access_type=offline&response_type=code";
 
-const prisma = new PrismaClient();
+const prisma = getPrismaClient();
 
 const options: InitOptions = {
   providers: [

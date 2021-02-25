@@ -1,7 +1,8 @@
-import { PrismaClient, Account } from "@prisma/client";
+import { Account } from "@prisma/client";
 import type { User } from "src/types";
+import getPrismaClient from "src/getPrismaClient";
 
-const prisma = new PrismaClient();
+const prisma = getPrismaClient();
 
 export const getAccessToken = async (user: User): Promise<string> => {
   const acct = await prisma.account.findFirst({ where: { userId: user.id } });

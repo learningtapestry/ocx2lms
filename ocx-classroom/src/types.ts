@@ -20,4 +20,6 @@ interface AuthPayload {
 
 interface Course extends classroom_v1.Schema$Course {}
 
-export type { AuthPayload, Session, User, Course, GenericObject };
+interface Assignment extends classroom_v1.Schema$CourseWork {}
+
+export type { AuthPayload, Session, User, Course, Assignment, GenericObject };

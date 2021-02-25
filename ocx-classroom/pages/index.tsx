@@ -1,20 +1,16 @@
 import React, { useState } from "react";
+import { GetServerSidePropsContext } from "next";
 import { useSession } from "next-auth/client";
 import { Course } from "src/types";
 import { getRequest, postRequest } from "src/xhr";
+import { Box, Button } from "@chakra-ui/react";
 
-const SAMPLE_COURSE = {
-  name: "10th Grade Biology",
-  section: "Period 2",
-  descriptionHeading: "Welcome to 10th Grade Biology",
-  description:
-    "We'll be learning about about the structure of living creatures from a combination of textbooks, guest lectures, and lab work. Expect to be excited!",
-  room: "301",
-  ownerId: "me",
-  courseState: "PROVISIONED"
-};
+// server side props
+import fs from "fs";
+import util from "util";
+const readFile = util.promisify(fs.readFile);
 
-export default function Home() {
+export default function Home(props) {
   const [session, _loading] = useSession();
   const [courses, setCourses] = useState(null);
 
@@ -26,30 +22,50 @@ export default function Home() {
   };
 
   const onCreate = async () => {
-    var course = SAMPLE_COURSE;
+    // TODO: we are just getting a static sample course for now
+    //       later we'll get from parsed ocx data
+    const course = props.course;
     const data = await postRequest("/api/create-course", course);
     setCourses([...courses, data]);
   };
 
+  const onAssignment = async () => {
+    const courseId = props.courseId;
+    const data = await postRequest("/api/assignments", { courseId });
+    console.log(data);
+  };
+
   const btn = { marginRight: "1em" };
   return (
-    <div>
-      <p>
-        <button onClick={onList} style={btn}>
+    <Box py="4">
+      <Box align="center" mb="4">
+        <Button onClick={onList} style={btn}>
           List courses
-        </button>
-        <button onClick={onCreate} style={btn}>
+        </Button>
+        <Button onClick={onCreate} style={btn}>
           Create course
-        </button>
-      </p>
-      <ul>
-        {courses?.length &&
-          courses.map((course: Course, i: number) => (
-            <li key={`course-${i}`}>
-              {course.id} - {course.name}
-            </li>
-          ))}
-      </ul>
-    </div>
+        </Button>
+        <Button onClick={onAssignment} style={btn}>
+          List assignments
+        </Button>
+      </Box>
+      <Box>
+        <ul>
+          {courses?.length &&
+            courses.map((course: Course, i: number) => (
+              <li key={`course-${i}`}>
+                {course.id} - {course.name}
+              </li>
+            ))}
+        </ul>
+      </Box>
+    </Box>
   );
 }
+
+export const getServerSideProps = async (_context: GetServerSidePropsContext) => {
+  const content = await readFile("data/samples/course-01.json", "utf-8");
+  const course = JSON.parse(content);
+  const courseId = "278166926877"; // temp just for testing
+  return { props: { course, courseId } };
+};

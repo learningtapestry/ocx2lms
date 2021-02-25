@@ -1,16 +1,18 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/client";
-import { listCourses } from "src/classroom";
+import { listAssignments } from "src/classroom";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
+  const params = req.body;
   try {
-    const courses = await listCourses(session);
-    res.status(200).json({ courses });
+    const assignments = await listAssignments(session, params);
+    res.status(200).json({ assignments });
   } catch (err) {
+    console.log(err);
     err.errors?.forEach(({ message }) => {
       console.log(message);
     });
-    res.status(422).json({ error: "Failed to fetch courses" });
+    res.status(422).json({ error: "Failed to fetch assignments" });
   }
 };

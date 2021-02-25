@@ -1,4 +1,4 @@
-import type { Session, Course } from "src/types";
+import type { Session, Course, Assignment } from "src/types";
 import { google } from "googleapis";
 import { getAccessToken } from "src/authUtils";
 
@@ -22,4 +22,13 @@ export const createCourse = async (session: Session, course: Course): Promise<Co
   const classroom = await googleClassroom(session);
   const resp = await classroom.courses.create({ requestBody: course });
   return resp.data;
+};
+
+export const listAssignments = async (session: Session, { courseId }): Promise<Assignment[]> => {
+  const classroom = await googleClassroom(session);
+  const resp = await classroom.courses.courseWork.list({
+    courseId,
+    courseWorkStates: ["PUBLISHED", "DRAFT"]
+  });
+  return resp.data.courseWork || [];
 };
