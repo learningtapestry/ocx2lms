@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev\" \"http-server ./samples\"",
+    "dev": "concurrently \"next dev\" \"http-server ./samples --cors\"",
     "build": "next build",
     "start": "next start"
   },

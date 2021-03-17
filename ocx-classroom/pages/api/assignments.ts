@@ -1,19 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/client";
 import { listAssignments } from "src/classroom";
+import { logError } from "src/utils";
 import protectedRoute from "src/protectedRoute";
 
 export default protectedRoute(async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
-  const params = req.body;
+  let session = await getSession({ req });
+  let params = req.body;
   try {
-    const assignments = await listAssignments(session, params);
+    let assignments = await listAssignments(session, params);
     res.status(200).json({ assignments });
   } catch (err) {
-    console.log(err);
-    err.errors?.forEach(({ message }) => {
-      console.log(message);
-    });
+    logError(err);
     res.status(422).json({ error: "Failed to fetch assignments" });
   }
 });

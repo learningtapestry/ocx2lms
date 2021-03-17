@@ -1,17 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/client";
 import { listCourses } from "src/classroom";
+import { logError } from "src/utils";
 import protectedRoute from "src/protectedRoute";
 
 export default protectedRoute(async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  let session = await getSession({ req });
   try {
-    const courses = await listCourses(session);
+    let courses = await listCourses(session);
     res.status(200).json({ courses });
   } catch (err) {
-    err.errors?.forEach(({ message }) => {
-      console.log(message);
-    });
+    logError(err);
     res.status(422).json({ error: "Failed to fetch courses" });
   }
 });

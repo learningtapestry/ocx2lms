@@ -6,25 +6,25 @@ import { getRequest, postRequest } from "src/xhr";
 import { Box, Button } from "@chakra-ui/react";
 
 export default function Home({ course, courseId }) {
-  const [session, _loading] = useSession();
-  const [courses, setCourses] = useState(null);
+  let [session, _loading] = useSession();
+  let [courses, setCourses] = useState(null);
 
   if (!session) return null;
 
-  const onList = async () => {
-    const { courses } = await getRequest("/api/list-courses");
+  let onList = async () => {
+    let { courses } = await getRequest("/api/list-courses");
     setCourses(courses);
   };
 
-  const onCreate = async () => {
+  let onCreate = async () => {
     // TODO: we are just getting a static sample course for now
     //       later we'll get from parsed ocx data
-    const data = await postRequest("/api/create-course", course);
+    let data = await postRequest("/api/create-course", course);
     setCourses([...courses, data]);
   };
 
-  const onAssignment = async () => {
-    const data = await postRequest("/api/assignments", { courseId });
+  let onAssignment = async () => {
+    let data = await postRequest("/api/assignments", { courseId });
     console.log(data);
   };
 
@@ -57,9 +57,9 @@ export default function Home({ course, courseId }) {
   );
 }
 
-export const getServerSideProps = async (_context: GetServerSidePropsContext) => {
-  const res = await getRequest(`${process.env.SAMPLES_URL}/course-01.json`);
-  const course = res;
-  const courseId = "278166926877"; // temp just for testing
+export let getServerSideProps = async (_context: GetServerSidePropsContext) => {
+  let res = await getRequest(`${process.env.SAMPLES_URL}/course-01.json`);
+  let course = res;
+  let courseId = "278166926877"; // temp just for testing
   return { props: { course, courseId } };
 };

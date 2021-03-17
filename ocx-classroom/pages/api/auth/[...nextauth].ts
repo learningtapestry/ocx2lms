@@ -21,9 +21,9 @@ const AUTHORIZATION_URL =
   "https://accounts.google.com/o/oauth2/v2/auth" +
   "?prompt=consent&access_type=offline&response_type=code";
 
-const prisma = getPrismaClient();
+let prisma = getPrismaClient();
 
-const options: InitOptions = {
+let options: InitOptions = {
   providers: [
     Providers.Google({
       clientId: process.env.GOOGLE_CLIENT_ID,

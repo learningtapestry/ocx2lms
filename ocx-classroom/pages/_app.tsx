@@ -5,10 +5,10 @@ import { ChakraProvider, extendTheme, Container } from "@chakra-ui/react";
 import theme from "src/theme";
 import Header from "components/Header";
 
-const chakraTheme = extendTheme(theme);
+let chakraTheme = extendTheme(theme);
 
 function App({ Component, pageProps }: AppProps) {
-  const title = "OCX - Classroom";
+  let title = "OCX - Classroom";
   return (
     <Provider session={pageProps.session}>
       <ChakraProvider theme={chakraTheme}>

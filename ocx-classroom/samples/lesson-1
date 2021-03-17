@@ -66,7 +66,7 @@
               "identifier": "10d3_UnitTO_ViewOnly",
               "url": "<url for material file>",
               "access": "link"
-            }],
+            }]
           }, {
             "@type": ["oer:Activity", "CreativeWork"],
             "@id": "http://ocx-classroom.org/materials/l1-a2-Core",
@@ -93,7 +93,7 @@
             "assignmentOutcome": "Rubric",
             "assignmentGroup": "Class Discussions",
             "totalPoints": 20,
-            "rubricId": "10d3_DiscussionRubric"
+            "rubricId": "10d3_DiscussionRubric",
             "assignmentMethod": "Independent",
             "hasPart": [{
               "@type": ["ocx:Assessment","CreativeWork"],
@@ -101,8 +101,7 @@
               "identifier": "10d3_S1_L1_DiscussTitleP2",
               "url": "<url for assignment content>",
               "access": "shared-submission"
-            }],
-
+            }]
           }, {
             "@type": ["oer:Activity", "CreativeWork"],
             "@id": "http://ocx-classroom.org/materials/l1-a4-Core",
