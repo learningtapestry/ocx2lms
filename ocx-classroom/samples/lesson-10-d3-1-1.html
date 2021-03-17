@@ -1,0 +1,187 @@
+<html>
+  <head>
+    <title>Example</title>
+  </head>
+  <body>
+    <header>
+      <nav><!-- links to other pages --></nav>
+    </header>
+    <main><!-- container for the OCX content -->
+      <script type="application/ld+json">
+        {
+          "@context": [
+            "http://schema.org/",
+            {
+              "oer": "http://oerschema.org/",
+              "ocx": "https://github.com/K12OCX/k12ocx-specs/",
+              "cc": "http://creativecommons.org/ns#"
+            }
+          ],
+          "@id": "http://ocx-classroom.org/lesson-10-d3-1-1#A",
+          "@type": ["oer:Lesson","Course"],
+          "learningResourceType": "Lesson",
+          "name": "Things Fall Apart",
+          "description": "We will discuss the title of the novel in preparation for reading the text. Then we will discuss the Culminating Task for the unit.",
+          "url": "http://ocx-classroom.org/lesson-10-d3-1-1",
+          "identifier": {
+            "@type": "PropertyValue",
+            "propertyID": "Resource identifier",
+            "value": "10-d3-1-1"
+          },
+          "dateCreated": "2021-02-28T17:26:37.919Z",
+          "dateModified": "2017-02-28T22:44:01.334Z",
+          "author": {
+            "@type": "Person",
+            "name": "John Doe"
+          },
+          "inLanguage": "en-US",
+          "isPartOf": {
+            "@type": "oer:Unit",
+            "@id": "http://ocx-classroom.org/ela/grade-6/module-1/unit-2#A",
+            "name": "Analyzing Structure and Communicating Theme in Literature"
+          },
+          "oer:forTopic": {
+            "@type": "oer:Topic",
+            "@id": "http://pilot.unbounded.org/ela",
+            "name": "ELA"
+          },
+          "ocx:material":[{
+            "@type": ["ocx:ReferencedMaterial","DigitalDocument"],
+            "@id": "http://ocx-classroom.org/materials/123",
+            "name": "Example material",
+            "alternateName": "ELA-10-D3-1-1-Example material"
+          }],
+          "hasPart": [{
+            "@type": ["oer:Activity", "CreativeWork"],
+            "@id": "http://ocx-classroom.org/materials/l1-a1-Core",
+            "name": "Unit Text Overview",
+            "focus": "Read",
+            "assignmentModality": "Read-Listen",
+            "assignmentOutcome": "Completed",
+            "totalPoints": 0,
+            "assignmentMethod": "Independent",
+            "ocx:material": [{
+              "@type": ["ocx:ReferencedMaterial", "WebContent"],
+              "@id": "http://ocx-classroom.org/materials/10d3_UnitTO_ViewOnly",
+              "identifier": "10d3_UnitTO_ViewOnly",
+              "url": "<url for material file>",
+              "access": "link"
+            }],
+          }, {
+            "@type": ["oer:Activity", "CreativeWork"],
+            "@id": "http://ocx-classroom.org/materials/l1-a2-Core",
+            "name": "Discuss the Title Part 1",
+            "focus": "Write",
+            "assignmentModality": "Short Answer",
+            "assignmentOutcome": "Submitted",
+            "assignmentGroup": "Daily Assignments",
+            "totalPoints": 0,
+            "assignmentMethod": "Independent",
+            "hasPart": [{
+              "@type": ["ocx:Assessment","CreativeWork"],
+              "@id": "http://ocx-classroom.org/materials/10d3_S1_L1_DiscussTitleP1",
+              "identifier": "10d3_S1_L1_DiscussTitleP1",
+              "url": "<url for assignment content>",
+              "access": "individual-submission"
+            }]
+          }, {
+            "@type": ["oer:Activity", "CreativeWork"],
+            "@id": "http://ocx-classroom.org/materials/l1-a3-Core",
+            "name": "Discuss the Title Part 2",
+            "focus": "Discuss",
+            "assignmentModality": "Discussion",
+            "assignmentOutcome": "Rubric",
+            "assignmentGroup": "Class Discussions",
+            "totalPoints": 20,
+            "rubricId": "10d3_DiscussionRubric"
+            "assignmentMethod": "Independent",
+            "hasPart": [{
+              "@type": ["ocx:Assessment","CreativeWork"],
+              "@id": "http://ocx-classroom.org/materials/10d3_S1_L1_DiscussTitleP2",
+              "identifier": "10d3_S1_L1_DiscussTitleP2",
+              "url": "<url for assignment content>",
+              "access": "shared-submission"
+            }],
+
+          }, {
+            "@type": ["oer:Activity", "CreativeWork"],
+            "@id": "http://ocx-classroom.org/materials/l1-a4-Core",
+            "name": "Discuss the Title Part 3",
+            "focus": "Write",
+            "assignmentModality": "Short Answer",
+            "assignmentOutcome": "Completed",
+            "assignmentGroup": "Progressive Assignments",
+            "progressiveAssignmentGroup": "10d3_LL",
+            "totalPoints": 0,
+            "assignmentMethod": "Independent"
+          }, {
+            "@type": ["oer:Activity", "CreativeWork"],
+            "@id": "http://ocx-classroom.org/materials/l1-a5-Core",
+            "name": "Analyze the Culminating Task Part 1",
+            "focus": "Discuss",
+            "assignmentModality": "Discussion",
+            "assignmentOutcome": "Submitted",
+            "assignmentGroup": "Class Discussions",
+            "totalPoints": 0,
+            "assignmentMethod": "Class",
+            "hasPart": [{
+              "@type": ["ocx:Assessment","CreativeWork"],
+              "@id": "http://ocx-classroom.org/materials/10d3_S1_L1_Analyze-the-Culminating-Task-Part-1",
+              "identifier": "10d3_S1_L1_Analyze the Culminating Task Part 1",
+              "url": "<url for assignment content>",
+              "access": "shared-submission"
+            }, {
+              "@type": ["ocx:Assessment","WebContent"],
+              "@id": "http://ocx-classroom.org/materials/10d3_CX_ViewOnly",
+              "identifier": "10d3_CX_ViewOnly",
+              "url": "<url for assignment content>",
+              "access": "link"
+            }]
+          }, {
+            "@type": ["oer:Activity", "CreativeWork"],
+            "@id": "http://ocx-classroom.org/materials/l1-a6-Core",
+            "name": "Analyze the Culminating Task Part 2",
+            "focus": "Read",
+            "assignmentModality": "Graphic Organizer",
+            "assignmentOutcome": "Completed",
+            "assignmentGroup": "Progressive Assignments",
+            "progressiveAssignmentGroup": "10d3_CX",
+            "totalPoints": 0,
+            "assignmentMethod": "Independent",
+            "hasPart": [{
+              "@type": ["ocx:Assessment","WebContent"],
+              "@id": "http://ocx-classroom.org/materials/10d3_CX_ViewOnly",
+              "identifier": "10d3_CX_ViewOnly",
+              "url": "<url for assignment content>",
+              "access": "link"
+            }]
+          }],
+          "cc:license": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+          "cc:attributionName": "This work is based on an original work of EL Education unless otherwise indicated, made available through licensing under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. This does not in any way imply that EL Education endorses this work."
+        }
+      </script>
+      <!-- extra props:
+             assignmentModality,
+             assignmentOutcome,
+             assignmentMethod,
+             progressiveAssignmentGroup, ?
+             material:access  (link => @type=WebContent ??),
+             assignment==assessment ??
+             rubricId ??
+      -->
+
+      <header><!-- note that any section may have a header -->
+        <h1>OCX Example</h1>
+        <p>Some general information about the resource</p>
+      </header>
+      <section>
+        <h2>Introduction to example subject</h2>
+        <div>content for introduction</div>
+      </section>
+      <section>
+        <h2>My example activity</h2>
+        <div>content for the learning activity</div>
+      </section>
+    </main>
+  </body>
+</html>

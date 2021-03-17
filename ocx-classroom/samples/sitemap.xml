@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <url>
+      <loc>http://www.example.com/</loc>
+   </url>
+
+  <url>
+    <loc>http://example.com/resources/lessons/abc-123</loc>
+    <lastmod>2020-02-20T02:20:22.00-02:00</lastmod>
+    <ocx:ocx>
+      <ocx:type>http://oerschema.org/Lesson/</ocx:type>
+      <ocx:format>JSON-LD</ocx:format>
+      <ocx:xpath>/html/head/script[@type="application/ld+json"]</ocx:xpath>
+    </ocx:ocx>
+  </url>
+
+  <url>
+    <loc>http://example.com/resources/activities/7</loc>
+    <lastmod>2020-02-20T02:20:22.00-02:00</lastmod>
+    <ocx:ocx>
+      <ocx:type>http://oerschema.org/Activity/</ocx:type>
+      <ocx:format>JSON-LD</ocx:format>
+      <ocx:loc>http://example.com/resources/activities/7</ocx:loc>
+      <ocx:xpath>/html/body/main/section[@class="activity"]</ocx:xpath>
+      <ocx:parent>http://example.com/resources/lessons/abc-123</ocx:parent>
+    </ocx:ocx>
+  </url>
+</urlset>
+</xml>

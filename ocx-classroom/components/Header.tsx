@@ -14,7 +14,7 @@ const Header = ({ title }) => {
   };
 
   return (
-    <Flex as="nav" bg="gray.600" color="whiteAlpha.700" px="5" py="2">
+    <Flex as="nav" bg="teal.700" color="whiteAlpha.800" px="5" py="2">
       <Box fontWeight="bold">
         <Link href="/">{title}</Link>
       </Box>
