@@ -1,0 +1,99 @@
+<html>
+  <head>
+    <title>Example</title>
+    <style type="text/css">
+      section {
+        border-bottom: solid 1px #bbb;
+        margin-bottom: 2em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav></nav>
+    </header>
+    <main>
+      <script type="application/ld+json">
+        {
+          "@context": [
+            "http://schema.org/",
+            {
+              "oer": "http://oerschema.org/",
+              "ocx": "https://github.com/K12OCX/k12ocx-specs/",
+              "cc": "http://creativecommons.org/ns#"
+            }
+          ],
+          "@id": "http://localhost:8080/unit-1#A",
+          "@type": ["oer:Unit","Unit"],
+          "learningResourceType": "Unit",
+          "name": "Things Fall Apart",
+          "url": "http://localhost:8080/unit-1",
+          "identifier": "10d3",
+          "dateCreated": "2021-02-28T17:26:37.919Z",
+          "dateModified": "2017-02-28T22:44:01.334Z",
+          "oer:forTopic": {
+            "@type": "oer:Topic",
+            "@id": "http://pilot.unbounded.org/ela",
+            "name": "ELA"
+          },
+          "ocx:material":[],
+          "hasPart": [{
+            "@type": ["oer:Activity", "CreativeWork"],
+            "@id": "http://ocx-classroom.org/unit-1#10d3_UNIT_UO",
+            "identifier": "10d3_UNIT_UO",
+            "learningResourceType": "Unit",
+            "name": "Things Fall Apart: Unit Overview",
+            "ocx:group": "Overview",
+            "ocx:material": []
+          },{
+            "@type": ["oer:Activity", "CreativeWork"],
+            "@id": "http://ocx-classroom.org/unit-1#10D3_UNIT_Syllabus",
+            "identifier": "10D3_UNIT_Syllabus",
+            "learningResourceType": "Unit",
+            "name": "Things Fall Apart Unit Syllabus",
+            "link": "https://docs.google.com/presentation/d/19PCz7JnsxrbWKVwLTHEBJrE1rJVGvqvFAa7IXfNzsic/edit#slide=id.p",
+            "ocx:group": "Overview",
+            "ocx:material": []
+          }, {
+            "@type": ["oer:Activity", "CreativeWork"],
+            "@id": "http://ocx-classroom.org/unit-1#10d3_UNIT_CT",
+            "identifier": "10d3_UNIT_CT",
+            "learningResourceType": "Unit",
+            "ocx:group": "Overview",
+            "ocx:material": [{
+              "url": "https://docs.google.com/document/d/1pUVhlzmwFIu89_OOiLBBABfupvDkrgTcqlkccQVzSBA/edit"
+            }]
+          }]
+        }
+      </script>
+      <!-- ocx:group => GC topic -->
+
+      <header>
+        <h1>Things Fall Apart</h1>
+      </header>
+      <section id="10d3_UNIT_UO">
+        <h2>What does it mean for things to fall apart?</h2>
+        <p>
+          In the novel Things Fall Apart, Pulitzer Prize-winner Chinua Achebe crafts the story of his central character, Okonkwo, an Igbo tribesman that lives during the European colonization of Africa. Through analyzing Achebe’s text, we will explore the following question: What does it mean for things to fall apart? We will examine the internal and external factors that influence and define who we become and how we make choices in our lives through the lens of the characters in Achebe’s novel. Our work will culminate with an expository essay that analyzes these forces in Okonkwo’s life.
+        </p>
+      </section>
+      <section id="10d3_UNIT_CT">
+        <h2>Culminating Task</h2>
+        <article>
+          <p>Central Question: What does it mean for things to fall apart?</p>
+          <p>
+            Culminating Task Prompt: Write a character analysis of Okonkwo. In your analysis, consider how internal and external factors influence his relationships and contribute to his fate at the end of the novel. In your response, be sure to do the following:
+            <ol>
+              <li>Include a clearly stated thesis that conveys your stance.</li>
+              <li>Summarize Okonkwo’s story, experiences, and motivations.</li>
+              <li>Develop your thesis through a sequence of claims related to internal factors (e.g., beliefs, fears, traits) and external factors (e.g., plot events and developments, setting).</li>
+              <li>Use specific examples from the text.</li>
+              <li>Clearly communicate your analysis through effective word choices, sentence and paragraph development, and transitions among ideas.</li>
+              <li>Use the conventions of usage, mechanics, and punctuation.</li>
+            </ol>
+          </p>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

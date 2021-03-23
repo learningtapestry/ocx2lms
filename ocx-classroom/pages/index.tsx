@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/client";
 import { Box, Button, Flex, FormControl, Input } from "@chakra-ui/react";
-import { getOCXjsonld } from "src/ocxUtils";
+import { getOCXjsonld, parseOCXData } from "src/ocxUtils";
 
 export default function Home({}) {
   let [session, _loading] = useSession();
@@ -12,8 +12,13 @@ export default function Home({}) {
 
   let onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let data = await getOCXjsonld(url);
-    console.log(data);
+    let data, ocx, doc;
+    try {
+      [ocx, doc] = await getOCXjsonld(url);
+    } catch (e) {
+      setData({ err: "Failed to parse OCX" });
+    }
+    data = await parseOCXData(ocx, doc);
     setData(data);
   };
 
