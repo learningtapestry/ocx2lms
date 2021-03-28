@@ -18,8 +18,68 @@ interface AuthPayload {
   error?: string;
 }
 
-interface Course extends classroom_v1.Schema$Course {}
+interface Course extends classroom_v1.Schema$Course {
+  type?: string;
+}
 
-interface Assignment extends classroom_v1.Schema$CourseWork {}
+interface CourseWorkAssignment extends classroom_v1.Schema$CourseWork {
+  // courseId: string
+  // id: string
+  // title: string
+  // description: string
+  // materials: Material[]
+  // state: enum (CourseWorkState)
+  // alternateLink: string
+  // creationTime: string
+  // updateTime: string
+  // dueDate: Date
+  // dueTime: TimeOfDay
+  // scheduledTime: string
+  // maxPoints: number
+  // workType: enum (CourseWorkType)
+  // associatedWithDeveloper: boolean
+  // assigneeMode: enum (AssigneeMode)
+  // individualStudentsOptions: IndividualStudentsOptions
+  // submissionModificationMode: enum (SubmissionModificationMode)
+  // creatorUserId: string
+  // topicId: string
+  // Union fields:
+  // "assignment": Assignment,
+  // "multipleChoiceQuestion": MultipleChoiceQuestion,
+}
 
-export type { AuthPayload, Session, User, Course, Assignment, GenericObject };
+interface CourseWorkMaterial extends classroom_v1.Schema$CourseWorkMaterial {
+  // courseId: string
+  // id: string
+  // title: string
+  // description: string
+  // materials: classroom_v1.Schema$Material[]
+  // state: DRAFT | PUBLISHED | DELETED
+  // alternateLink: string
+  // creationTime: string
+  // updateTime: string
+  // scheduledTime: string
+  // assigneeMode: ALL_STUDENTS | INDIVIDUAL_STUDENTS
+  // individualStudentsOptions: IndividualStudentsOptions[]
+  // creatorUserId: string
+  // topicId: string
+}
+
+interface Material extends classroom_v1.Schema$Material {}
+
+interface ClassroomData {
+  course: Course;
+  courseworks: (CourseWorkAssignment | CourseWorkMaterial)[];
+}
+
+export type {
+  AuthPayload,
+  Session,
+  User,
+  Course,
+  CourseWorkMaterial,
+  CourseWorkAssignment,
+  Material,
+  GenericObject,
+  ClassroomData
+};

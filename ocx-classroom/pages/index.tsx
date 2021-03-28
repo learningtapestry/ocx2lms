@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/client";
 import { Box, Button, Flex, FormControl, Input } from "@chakra-ui/react";
-import { getOCXjsonld, parseOCXData } from "src/ocxUtils";
+import { OcxToClassroomParser } from "src/ocx";
+import DataPreview from "components/DataPreview";
 
 export default function Home({}) {
   let [session, _loading] = useSession();
@@ -12,14 +13,9 @@ export default function Home({}) {
 
   let onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let data, ocx, doc;
-    try {
-      [ocx, doc] = await getOCXjsonld(url);
-    } catch (e) {
-      setData({ err: "Failed to parse OCX" });
-    }
-    data = await parseOCXData(ocx, doc);
-    setData(data);
+    let parser = new OcxToClassroomParser(url);
+    let newData = await parser.fetchAndParse();
+    setData(newData);
   };
 
   return (
@@ -36,12 +32,12 @@ export default function Home({}) {
               onChange={(e) => setUrl(e.target.value)}
             />
           </FormControl>
-          <Button colorScheme="teal" ml="2" type="submit">
+          <Button colorScheme="teal" backgroundColor="teal.700" ml="2" type="submit">
             &raquo;
           </Button>
         </Flex>
       </form>
-      <Box>{data && JSON.stringify(data, null, 2)}</Box>
+      <DataPreview data={data} />
     </Box>
   );
 }
