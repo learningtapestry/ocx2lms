@@ -1,9 +1,9 @@
-import type { CourseWorkMaterial, CourseWorkAssignment } from "src/types";
+import type { CourseWork } from "src/types";
 import { Box, Heading, Text, Badge, Divider } from "@chakra-ui/react";
 import MaterialItem from "./MaterialItem";
 
 interface IProps {
-  coursework: CourseWorkMaterial | CourseWorkAssignment;
+  coursework: CourseWork;
   last: boolean;
   sub?: boolean;
 }

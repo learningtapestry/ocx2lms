@@ -123,7 +123,7 @@ export class OcxToClassroomParser {
 
 function materialsList(ocx: GenericObject): GenericObject[] {
   let parts = (ocx.hasPart || []).filter((o) => hasOcxType(o, "Material"));
-  let materials = (ocx["ocx:material"] || []).filter((o) => hasOcxType(o, "Material"));
+  let materials = ocx["ocx:material"] || [];
   return parts.concat(materials);
 }
 

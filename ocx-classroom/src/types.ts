@@ -65,11 +65,13 @@ interface CourseWorkMaterial extends classroom_v1.Schema$CourseWorkMaterial {
   // topicId: string
 }
 
+type CourseWork = CourseWorkAssignment | CourseWorkMaterial;
+
 interface Material extends classroom_v1.Schema$Material {}
 
 interface ClassroomData {
   course: Course;
-  courseworks: (CourseWorkAssignment | CourseWorkMaterial)[];
+  courseworks: CourseWork[];
 }
 
 export type {
@@ -77,6 +79,7 @@ export type {
   Session,
   User,
   Course,
+  CourseWork,
   CourseWorkMaterial,
   CourseWorkAssignment,
   Material,
