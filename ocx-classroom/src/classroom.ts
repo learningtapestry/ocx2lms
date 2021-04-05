@@ -1,5 +1,13 @@
-import type { Session, Course, CourseWork } from "src/types";
+import type {
+  Session,
+  Course,
+  CourseWork,
+  GenericObject,
+  CourseWorkMaterial,
+  CourseWorkAssignment
+} from "src/types";
 import { google } from "googleapis";
+import { omit } from "lodash";
 import { getAccessToken } from "src/authUtils";
 
 let googleClassroom = async (session: Session) => {
@@ -17,7 +25,39 @@ export let listCourses = async (session: Session): Promise<Course[]> => {
 
 export let createCourse = async (session: Session, course: Course): Promise<Course> => {
   let classroom = await googleClassroom(session);
-  let resp = await classroom.courses.create({ requestBody: course });
+  let resp: GenericObject;
+  try {
+    resp = await classroom.courses.update({ id: course.id, requestBody: course });
+    return resp.data;
+  } catch (err) {
+    resp = await classroom.courses.create({ requestBody: course });
+    return resp.data;
+  }
+};
+
+export let createMaterial = async (
+  session: Session,
+  courseId: string,
+  coursework: CourseWorkMaterial
+): Promise<CourseWorkMaterial> => {
+  let classroom = await googleClassroom(session);
+  let resp = await classroom.courses.courseWorkMaterials.create({
+    courseId: courseId,
+    requestBody: omit(coursework, "type")
+  });
+  return resp.data;
+};
+
+export let createAssignment = async (
+  session: Session,
+  courseId: string,
+  coursework: CourseWorkAssignment
+): Promise<CourseWorkAssignment> => {
+  let classroom = await googleClassroom(session);
+  let resp = await classroom.courses.courseWork.create({
+    courseId: courseId,
+    requestBody: omit(coursework, "type")
+  });
   return resp.data;
 };
 

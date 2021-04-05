@@ -23,6 +23,7 @@ interface Course extends classroom_v1.Schema$Course {
 }
 
 interface CourseWorkAssignment extends classroom_v1.Schema$CourseWork {
+  type?: "CourseWorkAssignment";
   // courseId: string
   // id: string
   // title: string
@@ -49,6 +50,7 @@ interface CourseWorkAssignment extends classroom_v1.Schema$CourseWork {
 }
 
 interface CourseWorkMaterial extends classroom_v1.Schema$CourseWorkMaterial {
+  type?: "CourseWorkMaterial";
   // courseId: string
   // id: string
   // title: string

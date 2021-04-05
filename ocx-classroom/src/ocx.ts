@@ -1,7 +1,16 @@
 import _ from "lodash";
-import type { GenericObject, ClassroomData, CourseWorkMaterial, Course, Material } from "src/types";
+import type {
+  GenericObject,
+  ClassroomData,
+  CourseWorkMaterial,
+  CourseWorkAssignment,
+  Course,
+  Material
+} from "src/types";
 
-const jsonld_sel = 'script[type="application/ld+json"]';
+const jsonldSel = 'script[type="application/ld+json"]';
+const gdocIdRE = /docs.google.com\/\w+\/d\/([-\w]+)\/?.*/;
+const youtubeIdRE = /youtube.com\/watch\?v=([-\w]+)&?.*/;
 
 export class OcxToClassroomParser {
   ocx: GenericObject;
@@ -25,7 +34,7 @@ export class OcxToClassroomParser {
     let html = await response.text();
 
     this.doc = parser.parseFromString(html, "text/html");
-    let content = this.doc.querySelector(jsonld_sel).innerHTML;
+    let content = this.doc.querySelector(jsonldSel).innerHTML;
     try {
       this.ocx = JSON.parse(content);
     } catch (err) {
@@ -35,8 +44,12 @@ export class OcxToClassroomParser {
   }
 
   parse(): ClassroomData {
-    let materials = materialsList(this.ocx).map((m) => this.buildCourseWorkMaterial(m));
-    let assignments = [];
+    let materials = materialsList(this.ocx).map((m) => {
+      return this.buildCourseWorkMaterial(m);
+    });
+    let assignments = assignmentsList(this.ocx).map((a) => {
+      return this.buildCourseWorkAssignment(a);
+    });
     return {
       course: this.buildCourse(),
       courseworks: [...materials, ...assignments]
@@ -44,24 +57,34 @@ export class OcxToClassroomParser {
   }
 
   private buildCourse(): Course {
-    let course: Course = {};
-    if (this.ocx.identifier) {
-      course.id = `p:${this.ocx.identifier}`;
-    }
-    course.type = this.ocx.learningResourceType;
+    let course: Course = {
+      type: this.ocx.learningResourceType
+    };
 
-    if (_.lowerCase(course.type) === "class") {
-      course.name = this.ocx.name || "";
-    } else if (_.lowerCase(course.type) === "unit") {
-      course.name = this.ocx.name || `Unit - ${this.ocx.identifier}`;
+    let id = this.ocx.courseCode || this.ocx.identifier;
+    if (id) {
+      // course.id = `p:${id}`;
+      // OBS: reusing the id for the project can cause unexpected behaviour,
+      //      like unarchibing an old course and duplicating all materials
     }
-    course.description = _.trim(this.ocx.description);
+
+    course.name = this.ocx.name || this.ocx.alternateName;
+    if (this.ocx.name?.length > 0) {
+      course.section = this.ocx.alternateName;
+    }
+
+    let desc = this.ocx.description || this.ocx.about;
+    course.description = _.trim(desc);
+
     return course;
   }
 
   private buildCourseWorkMaterial(ocx: GenericObject): CourseWorkMaterial {
-    let cwMaterial: CourseWorkMaterial = { materials: [] };
-    cwMaterial.id = ocx.identifier; // TODO (alias?)
+    let cwMaterial: CourseWorkMaterial = {
+      type: "CourseWorkMaterial",
+      id: ocx.identifier,
+      materials: []
+    };
 
     let title = ocx.name;
     if (!title || _.isEmpty(title)) {
@@ -94,9 +117,58 @@ export class OcxToClassroomParser {
     });
 
     cwMaterial.state = "PUBLISHED";
-    // TODO: dueDate and dueTime
-
     return cwMaterial;
+  }
+
+  private buildCourseWorkAssignment(ocx: GenericObject): CourseWorkAssignment {
+    let cwAssignment: CourseWorkAssignment = {
+      type: "CourseWorkAssignment",
+      id: ocx.identifier,
+      workType: "ASSIGNMENT", // or SHORT_ANSWER_QUESTION | MULTIPLE_CHOICE_QUESTION
+      materials: []
+    };
+
+    let title = ocx.name;
+    if (!title || _.isEmpty(title)) {
+      let el = this.doc.getElementById(ocx.identifier);
+      if (el) {
+        title = (el.querySelector("h1") || el.querySelector("h2"))?.textContent;
+      }
+    }
+    cwAssignment.title = title;
+
+    let desc = ocx.description;
+    if (!desc || _.isEmpty(desc)) {
+      let el = this.doc.getElementById(ocx.identifier);
+      if (el) {
+        desc = (el.querySelector("article") || el.querySelector("p"))?.textContent;
+      }
+    }
+    cwAssignment.description = _.trim(desc);
+
+    let material = this.buildMaterial(ocx);
+    if (material) {
+      cwAssignment.materials.push(material);
+    }
+
+    materialsList(ocx).forEach((m) => {
+      let material = this.buildMaterial(m);
+      if (material) {
+        cwAssignment.materials.push(material);
+      }
+    });
+
+    if (ocx.totalPoints) {
+      cwAssignment.maxPoints = parseInt(ocx.totalPoints, 10);
+    } else if (_.lowerCase(ocx.assignmentOutcome) === "graded") {
+      cwAssignment.maxPoints = 100;
+    }
+
+    cwAssignment.state = "PUBLISHED";
+    // TODO: dueDate and dueTime
+    // TODO: submissionModificationMode
+
+    return cwAssignment;
   }
 
   private buildMaterial(m: GenericObject): Material | null {
@@ -107,12 +179,15 @@ export class OcxToClassroomParser {
     if (!url || _.isEmpty(url)) return null;
 
     if (_.includes(url, "youtube")) {
-      // TODO: parse id from url ?
-      return { youtubeVideo: { id: url } };
+      let youtubeId = youtubeIdRE.exec(url)?.[1];
+      return { youtubeVideo: { id: youtubeId } };
     } else if (_.includes(url, "docs.google")) {
-      // TODO: figure out share mode => VIEW | EDIT | STUDENT_COPY
-      // TODO: parse id from url ?
-      return { driveFile: { driveFile: { id: url }, shareMode: "VIEW" } };
+      let docId = gdocIdRE.exec(url)?.[1];
+      let shareMode = "VIEW"; // => VIEW | EDIT | STUDENT_COPY
+      if (_.lowerCase(m.assigneeMode) === "independent") {
+        shareMode = "STUDENT_COPY";
+      }
+      return { driveFile: { driveFile: { id: docId }, shareMode } };
     } else if (_.includes(url, "forms.google")) {
       return { form: { formUrl: url } };
     } else {
@@ -125,6 +200,10 @@ function materialsList(ocx: GenericObject): GenericObject[] {
   let parts = (ocx.hasPart || []).filter((o) => hasOcxType(o, "Material"));
   let materials = ocx["ocx:material"] || [];
   return parts.concat(materials);
+}
+
+function assignmentsList(ocx: GenericObject): GenericObject[] {
+  return (ocx.hasPart || []).filter((o) => hasOcxType(o, "ocx:Activity"));
 }
 
 function hasOcxType(ocx: GenericObject, type: string): boolean {

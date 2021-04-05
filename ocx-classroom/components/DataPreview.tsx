@@ -76,9 +76,13 @@ const DataPreview = (props: IProps) => {
             <Badge size="sm" variant="subtle" colorScheme="teal">
               {course.type}
             </Badge>
+            <Badge size="sm" variant="subtle" colorScheme="teal" ml="1">
+              {course.id}
+            </Badge>
             <Heading as="h2" size="md" color="white">
               {course.name}
             </Heading>
+            <Text color="whiteAlpha.700">{course.section}</Text>
           </Box>
           <Button colorScheme="teal" onClick={onSync} size="xs" mt="5px" disabled={syncing}>
             Sync to Classroom

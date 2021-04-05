@@ -23,22 +23,24 @@
               "cc": "http://creativecommons.org/ns#"
             }
           ],
-          "@id": "http://localhost:8080/unit-1#A",
+          "@id": "http://localhost:8080/10d3#A",
           "@type": ["oer:Unit","Unit"],
           "learningResourceType": "Unit",
           "name": "Things Fall Apart",
+          "alternateName": "Grade 10, Unit 3",
           "url": "http://localhost:8080/unit-1",
           "identifier": "10d3",
+          "courseCode": "10d3",
           "dateCreated": "2021-02-28T17:26:37.919Z",
           "dateModified": "2017-02-28T22:44:01.334Z",
           "oer:forTopic": {
             "@type": "oer:Topic",
-            "@id": "http://pilot.unbounded.org/ela",
+            "@id": "http://localhost:8080/ela",
             "name": "ELA"
           },
           "ocx:material":[{
             "@type": ["ocx:ReferencedMaterial","DigitalDocument"],
-            "@id": "http://ocx-classroom.org/unit-1#10d3_TXT_Igboculture",
+            "@id": "#10d3_TXT_Igboculture",
             "name": "“Igbo Culture and History” by Don C. Ohadike",
             "identifier": "10d3_TXT_Igboculture",
             "learningResourceType": "text",
@@ -46,7 +48,7 @@
             "description": "This text will help you understand Igbo culture so that you will have the necessary background knowledge to understand the characters, events, and ideas of Things Fall Apart. "
           }, {
             "@type": ["ocx:ReferencedMaterial","DigitalDocument"],
-            "@id": "http://ocx-classroom.org/unit-1#10d3_TXT_Secondcoming",
+            "@id": "#10d3_TXT_Secondcoming",
             "name": "\"The Second Coming\" by William Butler Yeats",
             "identifier": "10d3_TXT_Secondcoming",
             "learningResourceType": "text",
@@ -54,22 +56,22 @@
           }],
           "hasPart": [{
             "@type": ["ocx:SupportingMaterial","DigitalDocument"],
-            "@id": "http://ocx-classroom.org/unit-1#10d3_UNIT_UO",
+            "@id": "#10d3_UNIT_UO",
             "identifier": "10d3_UNIT_UO",
             "learningResourceType": "Unit",
             "name": "Things Fall Apart: Unit Overview",
             "ocx:material": []
           },{
             "@type": ["ocx:SupportingMaterial","DigitalDocument"],
-            "@id": "http://ocx-classroom.org/unit-1#10D3_UNIT_Syllabus",
+            "@id": "#10D3_UNIT_Syllabus",
             "identifier": "10D3_UNIT_Syllabus",
             "learningResourceType": "Unit",
             "name": "Things Fall Apart Unit Syllabus",
-            "link": "https://docs.google.com/presentation/d/19PCz7JnsxrbWKVwLTHEBJrE1rJVGvqvFAa7IXfNzsic",
+            "link": "https://docs.google.com/presentation/d/1EFMkdHPYHDYJTcXR8O7dE-VDA9hZNut4iIaEjJxhzC0",
             "ocx:material": []
           }, {
             "@type": ["ocx:SupportingMaterial","DigitalDocument"],
-            "@id": "http://ocx-classroom.org/unit-1#10d3_UNIT_CT",
+            "@id": "#10d3_UNIT_CT",
             "identifier": "10d3_UNIT_CT",
             "learningResourceType": "Unit",
             "ocx:material": [{
@@ -77,17 +79,32 @@
             }]
           }, {
             "@type": ["ocx:UnknowType","DigitalDocument"],
-            "@id": "http://ocx-classroom.org/unit-1#unknown",
+            "@id": "#unknown",
             "identifier": "unknown",
             "learningResourceType": "Unit",
             "title": "This should be ignored!",
             "ocx:material": [{
               "url": "https://unknown.unknown"
             }]
+          }, {
+            "@type": "ocx:Activity",
+            "@id": "#10d3_CNT",
+            "identifier": "10d3_CNT",
+            "name": "Character Note-Taking Tool",
+            "assignmentGroup": "Progressive",
+            "assignmentOutcome": "Graded",
+            "totalPoints": "50",
+            "assignmentMethod": "Independent",
+            "url": "https://docs.google.com/document/d/18YgS_7R94RpUwKzSm2pPFJAFszYkvyTGy56F5B1Nva8/edit"
+          }, {
+            "@type": "oer:Lesson",
+            "@id": "http://localhost:8080/10d3-lesson-1#A",
+            "identifier": "10d3-l1"
           }]
         }
       </script>
       <!-- material => @type = ReferencedMaterial | SupportingMaterial -->
+      <!-- activity => assignmentGroup, assignmentOutcome, totalPoints -->
 
       <header>
         <h1>Things Fall Apart</h1>
@@ -104,15 +121,30 @@
           <p>Central Question: What does it mean for things to fall apart?</p>
           <p>
             Culminating Task Prompt: Write a character analysis of Okonkwo. In your analysis, consider how internal and external factors influence his relationships and contribute to his fate at the end of the novel. In your response, be sure to do the following:
-            <ol>
-              <li>Include a clearly stated thesis that conveys your stance.</li>
-              <li>Summarize Okonkwo’s story, experiences, and motivations.</li>
-              <li>Develop your thesis through a sequence of claims related to internal factors (e.g., beliefs, fears, traits) and external factors (e.g., plot events and developments, setting).</li>
-              <li>Use specific examples from the text.</li>
-              <li>Clearly communicate your analysis through effective word choices, sentence and paragraph development, and transitions among ideas.</li>
-              <li>Use the conventions of usage, mechanics, and punctuation.</li>
-            </ol>
+            <ul>
+              <li>1. Include a clearly stated thesis that conveys your stance.</li>
+              <li>2. Summarize Okonkwo’s story, experiences, and motivations.</li>
+              <li>3. Develop your thesis through a sequence of claims related to internal factors (e.g., beliefs, fears, traits) and external factors (e.g., plot events and developments, setting).</li>
+              <li>4. Use specific examples from the text.</li>
+              <li>5. Clearly communicate your analysis through effective word choices, sentence and paragraph development, and transitions among ideas.</li>
+              <li>6. Use the conventions of usage, mechanics, and punctuation.</li>
+            </ul>
           </p>
+        </article>
+      </section>
+      <section id="10d3_CNT">
+        <article>
+          <p>
+            Throughout the unit, take notes on the following characters on the attached character note-taking tool.
+          </p>
+          <ul>
+            <li>1. Okonkwo</li>
+            <li>2. Unoka</li>
+            <li>3. Okoye</li>
+            <li>4. Ikemefuna</li>
+            <li>5. X</li>
+            <li>6. XX</li>
+          </ul>
         </article>
       </section>
     </main>
