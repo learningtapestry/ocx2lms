@@ -1,6 +1,7 @@
 import { flatten } from "lodash";
 import { findDocumentIds, writeOcxDocument } from "./lcmsQueries";
 import { lessonToHtml, materialToHtml } from "./odellToHtml";
+import { lessonToOer, materialToOer } from "./odellToOer";
 import { lessonPath, materialPath } from "./paths";
 import { readLesson, readMaterial } from "./readOdellDocument";
 
@@ -24,21 +25,25 @@ export default async function generateAllDocuments() {
         continue;
       }
 
+      const ocx = materialToOer(materialReference);
+
       await writeOcxDocument(
         material.documentId,
         "material",
         materialPath(materialReference, null, null),
-        material,
-        materialToHtml(materialReference)
+        ocx,
+        materialToHtml(materialReference, ocx)
       );
     }
 
+    const ocx = lessonToOer(lesson);
+
     await writeOcxDocument(
       documentId,
-      "document",
+      "lesson",
       lessonPath(lesson, null, null),
-      lesson,
-      lessonToHtml(lesson)
+      ocx,
+      lessonToHtml(lesson, ocx)
     );
   }
 }

@@ -1,17 +1,23 @@
 import getClient from "./pgClient";
 
-const typeModels = {
-  material: "Lcms::Engine::Material",
-  document: "Lcms::Engine::Document",
+type documentType = "material" | "lesson";
+
+const typeTables = {
+  material: "materials",
+  lesson: "documents",
 };
 
-async function findOdellIdByDocumentId(documentId: string, type: string) {
+const typeModels = {
+  material: "Lcms::Engine::Material",
+  lesson: "Lcms::Engine::Document",
+};
+
+async function findOdellIdByDocumentId(documentId: string, type: documentType) {
   const client = await getClient();
-  const table = type == "material" ? "materials" : "documents";
 
   try {
     const result = await client.query(
-      `SELECT id FROM ${table} WHERE file_id = $1::text`,
+      `SELECT id FROM ${typeTables[type]} WHERE file_id = $1::text`,
       [documentId]
     );
     return result.rows[0].id;
@@ -24,7 +30,7 @@ async function findOdellIdByDocumentId(documentId: string, type: string) {
 
 export async function writeOcxDocument(
   documentId: string,
-  type: "material" | "document",
+  type: documentType,
   path: string,
   document: any,
   html: string
