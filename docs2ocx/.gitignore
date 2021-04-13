@@ -1,0 +1,6 @@
+dist/
+node_modules/
+.vscode/
+.env
+client_secret.json
+credentials.json
