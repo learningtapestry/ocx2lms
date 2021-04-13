@@ -4,7 +4,8 @@ import type {
   CourseWork,
   GenericObject,
   CourseWorkMaterial,
-  CourseWorkAssignment
+  CourseWorkAssignment,
+  Topic
 } from "src/types";
 import { google } from "googleapis";
 import { omit } from "lodash";
@@ -43,7 +44,7 @@ export let createMaterial = async (
   let classroom = await googleClassroom(session);
   let resp = await classroom.courses.courseWorkMaterials.create({
     courseId: courseId,
-    requestBody: omit(coursework, "type")
+    requestBody: omit(coursework, "type", "topic")
   });
   return resp.data;
 };
@@ -56,9 +57,29 @@ export let createAssignment = async (
   let classroom = await googleClassroom(session);
   let resp = await classroom.courses.courseWork.create({
     courseId: courseId,
-    requestBody: omit(coursework, "type")
+    requestBody: omit(coursework, "type", "topic")
   });
   return resp.data;
+};
+
+export let createTopics = async (
+  session: Session,
+  courseId: string,
+  topics: Topic[]
+): Promise<Topic[]> => {
+  let classroom = await googleClassroom(session);
+
+  let newTopics = await Promise.all(
+    topics.map(async (topic) => {
+      let resp = await classroom.courses.topics.create({
+        courseId: courseId,
+        requestBody: { courseId, name: topic.name }
+      });
+      return resp.data;
+    })
+  );
+
+  return newTopics;
 };
 
 export let listAssignments = async (session: Session, { courseId }): Promise<CourseWork[]> => {

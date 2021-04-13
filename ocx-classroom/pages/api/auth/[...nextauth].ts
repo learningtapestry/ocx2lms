@@ -12,11 +12,9 @@ const SCOPES = [
   "https://www.googleapis.com/auth/classroom.courses",
   "https://www.googleapis.com/auth/classroom.coursework.me",
   "https://www.googleapis.com/auth/classroom.coursework.students",
-  "https://www.googleapis.com/auth/classroom.courseworkmaterials"
+  "https://www.googleapis.com/auth/classroom.courseworkmaterials",
+  "https://www.googleapis.com/auth/classroom.topics"
 ];
-// https://www.googleapis.com/auth/classroom.student-submissions.students
-// https://www.googleapis.com/auth/classroom.student-submissions.me
-// https://www.googleapis.com/auth/homeroom
 
 const AUTHORIZATION_URL =
   "https://accounts.google.com/o/oauth2/v2/auth" +

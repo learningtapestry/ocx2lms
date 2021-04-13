@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/client";
-import { Box, Button, Flex, FormControl, Input } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, Input, useToast } from "@chakra-ui/react";
 import { OcxToClassroomParser } from "src/ocx";
 import DataPreview from "components/DataPreview";
 
@@ -8,14 +8,25 @@ export default function Home({}) {
   let [session, _loading] = useSession();
   let [url, setUrl] = useState("");
   let [data, setData] = useState(null);
+  let toast = useToast();
 
   if (!session) return null;
 
   let onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let parser = new OcxToClassroomParser(url);
-    let newData = await parser.fetchAndParse();
-    setData(newData);
+    try {
+      let newData = await parser.fetchAndParse();
+      setData(newData);
+    } catch (e) {
+      console.error(e);
+      toast({
+        title: "Invalid OCX.",
+        status: "error",
+        duration: 5000,
+        isClosable: true
+      });
+    }
   };
 
   return (

@@ -5,7 +5,9 @@ import type {
   CourseWorkMaterial,
   CourseWorkAssignment,
   Course,
-  Material
+  Material,
+  Topic,
+  CourseWork
 } from "src/types";
 
 const jsonldSel = 'script[type="application/ld+json"]';
@@ -50,10 +52,14 @@ export class OcxToClassroomParser {
     let assignments = assignmentsList(this.ocx).map((a) => {
       return this.buildCourseWorkAssignment(a);
     });
-    return {
-      course: this.buildCourse(),
-      courseworks: [...materials, ...assignments]
-    };
+    let course = this.buildCourse();
+    let courseworks = [...materials, ...assignments];
+    let topics = _.chain(courseworks)
+      .map((c) => this.buildTopic(c))
+      .filter(Boolean)
+      .uniqBy("name")
+      .value();
+    return { course, courseworks, topics };
   }
 
   private buildCourse(): Course {
@@ -65,7 +71,7 @@ export class OcxToClassroomParser {
     if (id) {
       // course.id = `p:${id}`;
       // OBS: reusing the id for the project can cause unexpected behaviour,
-      //      like unarchibing an old course and duplicating all materials
+      //      like unarchiving an old course and duplicating all materials
     }
 
     course.name = this.ocx.name || this.ocx.alternateName;
@@ -81,8 +87,9 @@ export class OcxToClassroomParser {
 
   private buildCourseWorkMaterial(ocx: GenericObject): CourseWorkMaterial {
     let cwMaterial: CourseWorkMaterial = {
-      type: "CourseWorkMaterial",
+      type: "Material",
       id: ocx.identifier,
+      state: "DRAFT",
       materials: []
     };
 
@@ -116,15 +123,16 @@ export class OcxToClassroomParser {
       }
     });
 
-    cwMaterial.state = "PUBLISHED";
+    cwMaterial.topic = topicFor(ocx);
     return cwMaterial;
   }
 
   private buildCourseWorkAssignment(ocx: GenericObject): CourseWorkAssignment {
     let cwAssignment: CourseWorkAssignment = {
-      type: "CourseWorkAssignment",
+      type: "Assignment",
       id: ocx.identifier,
       workType: "ASSIGNMENT", // or SHORT_ANSWER_QUESTION | MULTIPLE_CHOICE_QUESTION
+      state: "DRAFT",
       materials: []
     };
 
@@ -164,9 +172,10 @@ export class OcxToClassroomParser {
       cwAssignment.maxPoints = 100;
     }
 
-    cwAssignment.state = "PUBLISHED";
     // TODO: dueDate and dueTime
     // TODO: submissionModificationMode
+
+    cwAssignment.topic = topicFor(ocx);
 
     return cwAssignment;
   }
@@ -194,22 +203,40 @@ export class OcxToClassroomParser {
       return { link: { url: url } };
     }
   }
+
+  private buildTopic(coursework: CourseWork): Topic | null {
+    if (coursework.topic?.length > 0) {
+      return { name: coursework.topic };
+    }
+    return null;
+  }
 }
 
 function materialsList(ocx: GenericObject): GenericObject[] {
-  let parts = (ocx.hasPart || []).filter((o) => hasOcxType(o, "Material"));
+  let parts = (ocx.hasPart || []).filter((o) => o.learningResourceType === "Material");
   let materials = ocx["ocx:material"] || [];
   return parts.concat(materials);
 }
 
 function assignmentsList(ocx: GenericObject): GenericObject[] {
-  return (ocx.hasPart || []).filter((o) => hasOcxType(o, "ocx:Activity"));
+  return (ocx.hasPart || []).filter((o) => o.learningResourceType === "Assignment");
 }
 
-function hasOcxType(ocx: GenericObject, type: string): boolean {
-  if (_.isArray(ocx["@type"])) {
-    return ocx["@type"].some((o) => _.includes(o, type));
-  } else {
-    return _.includes(ocx["@type"], type);
+function topicFor(ocx: GenericObject): string | null {
+  if (ocx.educationalUse === "recurring") {
+    return "Progressive Assignments";
+  } else if (ocx.educationalUse === "overview") {
+    return "Overview";
+  } else if (ocx.educationalUse === "text") {
+    return "Texts";
   }
+  return undefined;
 }
+
+// function hasOcxType(ocx: GenericObject, type: string): boolean {
+//   if (_.isArray(ocx["@type"])) {
+//     return ocx["@type"].some((o) => _.includes(o, type));
+//   } else {
+//     return _.includes(ocx["@type"], type);
+//   }
+// }

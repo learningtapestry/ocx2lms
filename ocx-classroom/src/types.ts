@@ -23,7 +23,8 @@ interface Course extends classroom_v1.Schema$Course {
 }
 
 interface CourseWorkAssignment extends classroom_v1.Schema$CourseWork {
-  type?: "CourseWorkAssignment";
+  type?: "Assignment";
+  topic?: string;
   // courseId: string
   // id: string
   // title: string
@@ -50,7 +51,8 @@ interface CourseWorkAssignment extends classroom_v1.Schema$CourseWork {
 }
 
 interface CourseWorkMaterial extends classroom_v1.Schema$CourseWorkMaterial {
-  type?: "CourseWorkMaterial";
+  type?: "Material";
+  topic?: string;
   // courseId: string
   // id: string
   // title: string
@@ -74,7 +76,10 @@ interface Material extends classroom_v1.Schema$Material {}
 interface ClassroomData {
   course: Course;
   courseworks: CourseWork[];
+  topics: Topic[];
 }
+
+interface Topic extends classroom_v1.Schema$Topic {}
 
 export type {
   AuthPayload,
@@ -85,6 +90,7 @@ export type {
   CourseWorkMaterial,
   CourseWorkAssignment,
   Material,
+  Topic,
   GenericObject,
   ClassroomData
 };
