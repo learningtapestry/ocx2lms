@@ -11,6 +11,7 @@ import type {
 } from "src/types";
 
 const jsonldSel = 'script[type="application/ld+json"]';
+const oerTypeRE = /oer:(.*)/;
 const gdocIdRE = /docs.google.com\/\w+\/d\/([-\w]+)\/?.*/;
 const youtubeIdRE = /youtube.com\/watch\?v=([-\w]+)&?.*/;
 
@@ -19,6 +20,7 @@ export class OcxToClassroomParser {
   doc: HTMLDocument;
 
   private url: string;
+  private isLesson: boolean;
 
   constructor(url: string) {
     this.url = url.indexOf("http://") === -1 ? "http://" + url : url;
@@ -26,13 +28,13 @@ export class OcxToClassroomParser {
 
   async fetchAndParse(): Promise<ClassroomData> {
     await this.fetchOcx();
-    return this.parse();
+    return await this.parse();
   }
 
   async fetchOcx(): Promise<void> {
     let parser = new DOMParser();
 
-    let response = await fetch(this.url);
+    let response = await fetch(this.url + `?_ts=${Date.now()}`);
     let html = await response.text();
 
     this.doc = parser.parseFromString(html, "text/html");
@@ -45,29 +47,48 @@ export class OcxToClassroomParser {
     }
   }
 
-  parse(): ClassroomData {
+  async parse(): Promise<ClassroomData> {
+    let course = this.buildCourse();
+    this.isLesson = course.type === "Lesson";
+
     let materials = materialsList(this.ocx).map((m) => {
       return this.buildCourseWorkMaterial(m);
     });
     let assignments = assignmentsList(this.ocx).map((a) => {
       return this.buildCourseWorkAssignment(a);
     });
-    let course = this.buildCourse();
+
     let courseworks = [...materials, ...assignments];
     let topics = _.chain(courseworks)
       .map((c) => this.buildTopic(c))
       .filter(Boolean)
       .uniqBy("name")
       .value();
+
+    let subResources = await Promise.all(
+      subResourcesList(this.ocx).map(async (url) => {
+        let parser = new OcxToClassroomParser(url);
+        let data = await parser.fetchAndParse();
+        return data;
+      })
+    );
+    subResources.forEach((d) => {
+      if (d.courseworks?.length) {
+        courseworks.push(...d.courseworks);
+      }
+      if (d.topics?.length) {
+        topics.push(...d.topics);
+      }
+    });
     return { course, courseworks, topics };
   }
 
   private buildCourse(): Course {
     let course: Course = {
-      type: this.ocx.learningResourceType
+      type: this.ocx["@type"]?.match(oerTypeRE)?.[1]
     };
 
-    let id = this.ocx.courseCode || this.ocx.identifier;
+    let id = this.ocx.courseCode || ocxIdentifier(this.ocx);
     if (id) {
       // course.id = `p:${id}`;
       // OBS: reusing the id for the project can cause unexpected behaviour,
@@ -88,7 +109,7 @@ export class OcxToClassroomParser {
   private buildCourseWorkMaterial(ocx: GenericObject): CourseWorkMaterial {
     let cwMaterial: CourseWorkMaterial = {
       type: "Material",
-      id: ocx.identifier,
+      id: ocxIdentifier(ocx),
       state: "DRAFT",
       materials: []
     };
@@ -106,7 +127,7 @@ export class OcxToClassroomParser {
     if (!desc || _.isEmpty(desc)) {
       let el = this.doc.getElementById(ocx.identifier);
       if (el) {
-        desc = (el.querySelector("article") || el.querySelector("p"))?.textContent;
+        desc = (el.querySelector("article") || el)?.textContent;
       }
     }
     cwMaterial.description = _.trim(desc);
@@ -123,22 +144,23 @@ export class OcxToClassroomParser {
       }
     });
 
-    cwMaterial.topic = topicFor(ocx);
+    cwMaterial.topic = this.getTopicName(ocx);
     return cwMaterial;
   }
 
   private buildCourseWorkAssignment(ocx: GenericObject): CourseWorkAssignment {
     let cwAssignment: CourseWorkAssignment = {
       type: "Assignment",
-      id: ocx.identifier,
+      id: ocxIdentifier(ocx),
       workType: "ASSIGNMENT", // or SHORT_ANSWER_QUESTION | MULTIPLE_CHOICE_QUESTION
       state: "DRAFT",
       materials: []
     };
 
+    let id = ocxIdentifier(ocx);
     let title = ocx.name;
     if (!title || _.isEmpty(title)) {
-      let el = this.doc.getElementById(ocx.identifier);
+      let el = this.doc.getElementById(id);
       if (el) {
         title = (el.querySelector("h1") || el.querySelector("h2"))?.textContent;
       }
@@ -147,9 +169,9 @@ export class OcxToClassroomParser {
 
     let desc = ocx.description;
     if (!desc || _.isEmpty(desc)) {
-      let el = this.doc.getElementById(ocx.identifier);
+      let el = this.doc.getElementById(id);
       if (el) {
-        desc = (el.querySelector("article") || el.querySelector("p"))?.textContent;
+        desc = (el.querySelector("article") || el)?.textContent;
       }
     }
     cwAssignment.description = _.trim(desc);
@@ -173,9 +195,8 @@ export class OcxToClassroomParser {
     }
 
     // TODO: dueDate and dueTime
-    // TODO: submissionModificationMode
 
-    cwAssignment.topic = topicFor(ocx);
+    cwAssignment.topic = this.getTopicName(ocx);
 
     return cwAssignment;
   }
@@ -188,15 +209,9 @@ export class OcxToClassroomParser {
     if (!url || _.isEmpty(url)) return null;
 
     if (_.includes(url, "youtube")) {
-      let youtubeId = youtubeIdRE.exec(url)?.[1];
-      return { youtubeVideo: { id: youtubeId } };
+      return youtubeMaterial(url);
     } else if (_.includes(url, "docs.google")) {
-      let docId = gdocIdRE.exec(url)?.[1];
-      let shareMode = "VIEW"; // => VIEW | EDIT | STUDENT_COPY
-      if (_.lowerCase(m.assigneeMode) === "independent") {
-        shareMode = "STUDENT_COPY";
-      }
-      return { driveFile: { driveFile: { id: docId }, shareMode } };
+      return gdocMaterial(url, m);
     } else if (_.includes(url, "forms.google")) {
       return { form: { formUrl: url } };
     } else {
@@ -210,33 +225,73 @@ export class OcxToClassroomParser {
     }
     return null;
   }
+
+  private getTopicName(ocx: GenericObject): string | null {
+    if (this.isLesson) {
+      // TODO: calc Week
+      return "Week 1";
+    }
+
+    if (_.includes(ocx.educationalUse, "progressive")) {
+      return "Progressive Assignments";
+    } else if (_.includes(ocx.educationalUse, "overview")) {
+      return "Overview";
+    } else if (_.includes(ocx.educationalUse, "text")) {
+      return "Texts";
+    }
+    return null;
+  }
+}
+
+function ocxIdentifier(ocx: GenericObject): string {
+  if (ocx.identifier) return ocx.identifier;
+
+  let _id: string = ocx["@id"] || "";
+
+  if (_id.startsWith("#")) return _id.substr(1);
+  if (_id.startsWith("http")) return _.last(_id.split("/"));
+
+  return _id;
 }
 
 function materialsList(ocx: GenericObject): GenericObject[] {
-  let parts = (ocx.hasPart || []).filter((o) => o.learningResourceType === "Material");
+  let parts = (ocx.hasPart || []).filter((o) => hasOcxType(o, "Material"));
   let materials = ocx["ocx:material"] || [];
   return parts.concat(materials);
 }
 
 function assignmentsList(ocx: GenericObject): GenericObject[] {
-  return (ocx.hasPart || []).filter((o) => o.learningResourceType === "Assignment");
+  return (ocx.hasPart || []).filter((o) => hasOcxType(o, "Activity"));
 }
 
-function topicFor(ocx: GenericObject): string | null {
-  if (ocx.educationalUse === "recurring") {
-    return "Progressive Assignments";
-  } else if (ocx.educationalUse === "overview") {
-    return "Overview";
-  } else if (ocx.educationalUse === "text") {
-    return "Texts";
+function subResourcesList(ocx: GenericObject): string[] {
+  const keys = ["name", "hasPart", "ocx:material", "educationalUse"];
+  return (ocx.hasPart || [])
+    .filter((o) => {
+      let anyData = keys.some((k) => o[k]);
+      return o["@id"]?.startsWith("http") && !anyData;
+    })
+    .map((o) => o["@id"]);
+}
+
+function youtubeMaterial(url: string): Material {
+  let youtubeId = youtubeIdRE.exec(url)?.[1];
+  return { youtubeVideo: { id: youtubeId } };
+}
+
+function gdocMaterial(url: string, m: GenericObject): Material {
+  let docId = gdocIdRE.exec(url)?.[1];
+  let shareMode: string;
+  if (_.includes(m.educationalUse, "individual-submission")) {
+    shareMode = "STUDENT_COPY";
+  } else if (_.includes(m.educationalUse, "shared-submission")) {
+    shareMode = "EDIT";
+  } else {
+    shareMode = "VIEW";
   }
-  return undefined;
+  return { driveFile: { driveFile: { id: docId }, shareMode } };
 }
 
-// function hasOcxType(ocx: GenericObject, type: string): boolean {
-//   if (_.isArray(ocx["@type"])) {
-//     return ocx["@type"].some((o) => _.includes(o, type));
-//   } else {
-//     return _.includes(ocx["@type"], type);
-//   }
-// }
+function hasOcxType(ocx: GenericObject, type: string): boolean {
+  return _.includes(ocx["@type"], type);
+}

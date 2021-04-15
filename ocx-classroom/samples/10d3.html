@@ -24,8 +24,7 @@
             }
           ],
           "@id": "http://localhost:8080/10d3#A",
-          "@type": ["oer:Unit","Unit"],
-          "learningResourceType": "Unit",
+          "@type": "oer:Unit",
           "name": "Things Fall Apart",
           "alternateName": "Grade 10, Unit 3",
           "url": "http://localhost:8080/unit-1",
@@ -38,80 +37,103 @@
             "@id": "http://localhost:8080/ela",
             "name": "ELA"
           },
-          "ocx:material":[{
-            "@type": ["ocx:ReferencedMaterial","DigitalDocument"],
-            "@id": "#10d3_TXT_Igboculture",
-            "name": "“Igbo Culture and History” by Don C. Ohadike",
-            "identifier": "10d3_TXT_Igboculture",
-            "learningResourceType": "Material",
-            "educationalUse": "text",
-            "link": "https://womrel.sitehost.iu.edu/REL%20300%20Spirit/REL%20300_Spirit/Igbo%20Culture%20and%20History.pdf",
-            "description": "This text will help you understand Igbo culture so that you will have the necessary background knowledge to understand the characters, events, and ideas of Things Fall Apart. "
-          }, {
-            "@type": ["ocx:ReferencedMaterial","DigitalDocument"],
-            "@id": "#10d3_TXT_Secondcoming",
-            "name": "\"The Second Coming\" by William Butler Yeats",
-            "identifier": "10d3_TXT_Secondcoming",
-            "learningResourceType": "Material",
-            "educationalUse": "text",
-            "link": "https://www.poetryfoundation.org/poems/43290/the-second-coming"
-          }],
-          "hasPart": [{
-            "@type": ["ocx:SupportingMaterial","DigitalDocument"],
-            "@id": "#10d3_UNIT_UO",
-            "identifier": "10d3_UNIT_UO",
-            "learningResourceType": "Material",
-            "educationalUse": "overview",
-            "name": "Things Fall Apart: Unit Overview",
-            "ocx:material": []
-          },{
-            "@type": ["ocx:SupportingMaterial","DigitalDocument"],
-            "@id": "#10D3_UNIT_Syllabus",
-            "identifier": "10D3_UNIT_Syllabus",
-            "learningResourceType": "Material",
-            "educationalUse": "overview",
-            "name": "Things Fall Apart Unit Syllabus",
-            "link": "https://docs.google.com/presentation/d/1EFMkdHPYHDYJTcXR8O7dE-VDA9hZNut4iIaEjJxhzC0",
-            "ocx:material": []
-          }, {
-            "@type": ["ocx:SupportingMaterial","DigitalDocument"],
-            "@id": "#10d3_UNIT_CT",
-            "identifier": "10d3_UNIT_CT",
-            "learningResourceType": "Material",
-            "educationalUse": "overview",
-            "ocx:material": [{
-              "url": "https://docs.google.com/document/d/1pUVhlzmwFIu89_OOiLBBABfupvDkrgTcqlkccQVzSBA"
-            }]
-          }, {
-            "@type": ["ocx:UnknowType","DigitalDocument"],
-            "@id": "#unknown",
-            "identifier": "unknown",
-            "learningResourceType": "Unknown",
-            "title": "This should be ignored!",
-            "ocx:material": [{
-              "url": "https://unknown.unknown"
-            }]
-          }, {
-            "@type": "ocx:Activity",
-            "@id": "#10d3_CNT",
-            "identifier": "10d3_CNT",
-            "name": "Character Note-Taking Tool",
-            "learningResourceType": "Assignment",
-            "educationalUse": "recurring",
-            "assignmentGroup": "Progressive",
-            "assignmentOutcome": "Graded",
-            "totalPoints": "50",
-            "assignmentMethod": "Independent",
-            "url": "https://docs.google.com/document/d/18YgS_7R94RpUwKzSm2pPFJAFszYkvyTGy56F5B1Nva8/edit"
-          }, {
-            "@type": "oer:Lesson",
-            "@id": "http://localhost:8080/10d3-lesson-1#A",
-            "identifier": "10d3-l1",
-            "learningResourceType": "Lesson"
-          }]
+          "ocx:material":[
+            {
+              "@type": "oer:SupportingMaterial",
+              "@id": "#10d3_TXT_Igboculture",
+              "name": "“Igbo Culture and History” by Don C. Ohadike",
+              "educationalUse": ["text"],
+              "link": "https://womrel.sitehost.iu.edu/REL%20300%20Spirit/REL%20300_Spirit/Igbo%20Culture%20and%20History.pdf",
+              "description": "This text will help you understand Igbo culture so that you will have the necessary background knowledge to understand the characters, events, and ideas of Things Fall Apart. "
+            },
+            {
+              "@type": "oer:SupportingMaterial",
+              "@id": "#10d3_TXT_Secondcoming",
+              "name": "\"The Second Coming\" by William Butler Yeats",
+              "identifier": "10d3_TXT_Secondcoming",
+              "educationalUse": ["text"],
+              "link": "https://www.poetryfoundation.org/poems/43290/the-second-coming"
+            }
+          ],
+          "hasPart": [
+            {
+              "@type": "oer:SupportingMaterial",
+              "@id": "#10d3_UNIT_UO",
+              "identifier": "10d3_UNIT_UO",
+              "educationalUse": ["overview"],
+              "name": "Things Fall Apart: Unit Overview",
+              "ocx:material": []
+            },
+            {
+              "@type": "oer:SupportingMaterial",
+              "@id": "#10D3_UNIT_Syllabus",
+              "identifier": "10D3_UNIT_Syllabus",
+              "educationalUse": ["overview"],
+              "name": "Things Fall Apart Unit Syllabus",
+              "link": "https://docs.google.com/presentation/d/1EFMkdHPYHDYJTcXR8O7dE-VDA9hZNut4iIaEjJxhzC0",
+              "ocx:material": []
+            },
+            {
+              "@type": "oer:SupportingMaterial",
+              "@id": "#10d3_UNIT_CT",
+              "identifier": "10d3_UNIT_CT",
+              "educationalUse": ["core", "overview"],
+              "ocx:material": [{
+                "url": "https://docs.google.com/document/d/1aA6ig_6fd1-eoY-QQTriv-mqje9OOgOyifdxi5eERVM/edit"
+              }]
+            },
+            {
+              "@type": "UnknowType",
+              "@id": "#unknown",
+              "identifier": "unknown",
+              "title": "This should be ignored!",
+              "ocx:material": [{
+                "url": "https://unknown.unknown"
+              }]
+            },
+            {
+              "@type": "oer:Activity",
+              "@id": "#10d3_CNT",
+              "identifier": "10d3_CNT",
+              "name": "Character Note-Taking Tool",
+              "educationalUse": ["progressive", "individual-submission"],
+              "assignmentOutcome": "Graded",
+              "totalPoints": "50",
+              "url": "https://docs.google.com/document/d/18YgS_7R94RpUwKzSm2pPFJAFszYkvyTGy56F5B1Nva8/edit"
+            },
+            {
+              "@type": "oer:Activity",
+              "@id": "#10d3_LL",
+              "identifier": "10d3_LL",
+              "name": "Things Fall Apart Learning Log",
+              "description": "Use this learning log to track your learning across the unit.",
+              "educationalUse": ["progressive", "individual-submission"],
+              "url": "https://docs.google.com/document/d/1hwRvSogfp9qrL9buol1dTfEApEu6CXhAoJlsjprRG4E/edit"
+            },
+            {
+              "@type": "oer:Activity",
+              "@id": "#10d3_VJ",
+              "identifier": "10d3_VJ",
+              "name": "Things Fall Apart Vocabulary Journal",
+              "educationalUse": ["progressive", "individual-submission"],
+              "url": "https://docs.google.com/document/d/1QRi092or-XJ9UT_tbUK9ICa54aIsi1ztCsiI0u1uNEU/edit"
+            },
+            {
+              "@type": "oer:Activity",
+              "@id": "#10d3_CX",
+              "identifier": "10d3_CX",
+              "name": "Culminating Task Progress Tracker",
+              "educationalUse": ["progressive", "individual-submission"],
+              "url": "https://docs.google.com/document/d/10ku84aNopwZvHvcuUvVzrpHgx83fcGoDfm0m84CFXxU/edit"
+            },
+            {
+              "@type": "oer:Lesson",
+              "@id": "http://localhost:8080/10d3-l1#A"
+            }
+          ]
         }
       </script>
-      <!-- material => @type = ReferencedMaterial | SupportingMaterial -->
+      <!-- material => link | url -->
       <!-- activity => assignmentGroup, assignmentOutcome, totalPoints -->
 
       <header>
@@ -153,6 +175,11 @@
             <li>5. X</li>
             <li>6. XX</li>
           </ul>
+        </article>
+      </section>
+      <section id="10d3_VJ">
+        <article>
+          Throughout the unit, document words or concepts that you do not know or that you think are important to learn and practice. You might use context clues from the text you are reading to assist in determining what the words mean. You might also consult a dictionary or other reference material. Many words or concepts have more than one meaning, so be sure to think about the context in which they are used to determine the most accurate meaning. Some words may be provided by your teacher, but you should also note any other words you find interesting.
         </article>
       </section>
     </main>

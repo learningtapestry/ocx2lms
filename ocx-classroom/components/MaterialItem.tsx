@@ -1,7 +1,7 @@
 import { Badge, Flex, Link } from "@chakra-ui/react";
 
 const MaterialItem = ({ material }) => {
-  let type: string, url: string;
+  let type: string, url: string, shareMode;
   if (material.link) {
     type = "link";
     url = material.link.url;

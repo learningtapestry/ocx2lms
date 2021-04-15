@@ -19,19 +19,19 @@ export default protectedRoute(async (req: NextApiRequest, res: NextApiResponse) 
     let created = await createCourse(session, course);
     let courseId = created?.id || data.course.id;
     let topics = await createTopics(session, courseId, data.topics);
-    data.courseworks.forEach(async (coursework) => {
-      // TODO: handle individual sync failures
-      let topic = topics.find((t) => coursework.topic && t.name === coursework.topic);
+    data.courseworks.forEach(async (cw) => {
+      let topic = topics.find((t) => cw.topic && t.name === cw.topic);
       if (topic) {
-        coursework.topicId = topic.topicId;
+        cw.topicId = topic.topicId;
       }
       try {
-        if (coursework.type == "Material") {
-          await createMaterial(session, courseId, coursework);
+        if (cw.type == "Material") {
+          await createMaterial(session, courseId, cw);
         } else {
-          await createAssignment(session, courseId, coursework);
+          await createAssignment(session, courseId, cw);
         }
       } catch (err) {
+        console.log("Error:", [cw.type, cw.id, cw.title].join(" :: "));
         logError(err);
       }
     });
