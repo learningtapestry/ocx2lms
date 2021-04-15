@@ -1,4 +1,3 @@
-import { lessonToOer, materialToOer } from "./odellToOer";
 import { LessonDocument, MaterialReference } from "./odellTypes";
 import { snakeCase } from "lodash";
 import { format } from "prettier";
@@ -11,14 +10,16 @@ const prettify = (content: string) => {
   }
 };
 
-export function materialToHtml(material: MaterialReference) {
-  const jsonLd = JSON.stringify(materialToOer(material), null, 2);
+export function materialToHtml(
+  material: MaterialReference,
+  jsonLd: Record<string, any>
+) {
   return prettify(`
   <!DOCTYPE html>
   <html>
     <head>
       <script type="application/ld+json">
-        ${jsonLd}
+        ${JSON.stringify(jsonLd, null, 2)}
       </script>
     </head>
     <body>
@@ -29,9 +30,10 @@ export function materialToHtml(material: MaterialReference) {
   </html>`);
 }
 
-export function lessonToHtml(lesson: LessonDocument) {
-  const jsonLd = JSON.stringify(lessonToOer(lesson), null, 2);
-
+export function lessonToHtml(
+  lesson: LessonDocument,
+  jsonLd: Record<string, any>
+) {
   const html = [];
   let i = 1;
   for (const activity of lesson.activities) {
@@ -65,7 +67,7 @@ export function lessonToHtml(lesson: LessonDocument) {
     <html>
       <head>
         <script type="application/ld+json">
-          ${jsonLd}
+          ${JSON.stringify(jsonLd, null, 2)}
         </script>
       </head>
       <body>

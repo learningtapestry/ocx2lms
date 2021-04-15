@@ -27,6 +27,21 @@ const buildJsonLd = (
   };
 };
 
+const lessonName = (lesson: LessonDocument) =>
+  `S${lesson.metadata.section}_L${lesson.metadata.lesson}`;
+
+const activityName = (lesson: LessonDocument, activity: Activity) => {
+  let title = `S${lesson.metadata.section}_L${lesson.metadata.lesson}_A${activity.metadata.activity}:`;
+  if (activity.metadata.activity_type == "optional") {
+    title += " (OPTIONAL)";
+  }
+  title += ` ${activity.metadata.activity_title}`;
+  return title;
+};
+
+const materialName = (material: MaterialReference) =>
+  material.resolvedMaterial.metadata.title;
+
 const buildLesson = (lesson: LessonDocument) => {
   const lessonJson = buildJsonLd("oer:Lesson", {
     "@id": lessonPath(lesson, config.baseOcxPath),
@@ -66,6 +81,8 @@ const buildLesson = (lesson: LessonDocument) => {
     lessonJson.educationalUse = "optional";
   }
 
+  lessonJson.name = lessonName(lesson);
+
   const activities = [];
   let i = 0;
   for (const activity of lesson.activities) {
@@ -94,7 +111,7 @@ const buildActivity = (
     "oer:Activity",
     {
       "@id": `#Activity_${index}`,
-      name: activity.metadata.activity_title,
+      name: activityName(lesson, activity),
       educationalUse: uses,
     },
     includeContext
@@ -136,8 +153,14 @@ export function materialToOer(
     includeContext
   );
 
-  if (material.accessType == "link" && material.resolvedMaterial) {
-    materialJson.url = material.resolvedMaterial.metadata.link;
+  if (material.resolvedMaterial) {
+    materialJson.name = materialName(material);
+
+    if (material.accessType == "link") {
+      materialJson.url = material.resolvedMaterial.metadata.link;
+    } else if (!includeContext) {
+      materialJson.url = referenceId;
+    }
   }
 
   return materialJson;
