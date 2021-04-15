@@ -1,3 +1,3 @@
-import generateAllDocuments from "./generateAllDocuments";
+import { generateAllDocuments } from "./generateOcxDocument";
 
 generateAllDocuments();

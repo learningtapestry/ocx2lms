@@ -12,6 +12,22 @@ const typeModels = {
   lesson: "Lcms::Engine::Document",
 };
 
+export async function findDocumentIdByOdellId(odellId: number) {
+  const client = await getClient();
+
+  try {
+    const result = await client.query(
+      `SELECT file_id FROM documents WHERE id = $1`,
+      [odellId]
+    );
+    return result.rows[0].file_id;
+  } catch (err) {
+    return null;
+  } finally {
+    client.release();
+  }
+}
+
 async function findOdellIdByDocumentId(documentId: string, type: documentType) {
   const client = await getClient();
 
