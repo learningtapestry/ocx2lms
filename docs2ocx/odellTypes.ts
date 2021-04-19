@@ -9,6 +9,7 @@ export const DocumentMetadataKeys = {
   "lesson-type": "lesson_type",
   "lesson-description": "lesson_description",
   "lesson-look-fors": "lesson_look_fors",
+  "look-fors": "look_fors",
 };
 
 export const ActivityMetadataKeys = {
@@ -41,8 +42,16 @@ export const MaterialMetadataKeys = {
   link: "link",
 };
 
-export interface LessonMetadata {
-  type: string;
+export type DocumentTypes =
+  | "material"
+  | "lesson"
+  | "progressive"
+  | "texts"
+  | "overview";
+
+export interface DocumentMetadata {
+  description: string;
+  type: DocumentTypes;
   grade: string;
   guidebook_type: string;
   guidebook_title: string;
@@ -52,6 +61,7 @@ export interface LessonMetadata {
   lesson_type: string;
   lesson_description: string;
   lesson_look_fors: string;
+  look_fors: string;
 }
 
 export interface ActivityMetadata {
@@ -101,15 +111,15 @@ export interface Activity {
   teacherContents: TeacherContent[];
 }
 
-export interface LessonDocument {
-  metadata: LessonMetadata;
+export interface OdellDocument {
+  metadata: DocumentMetadata;
   activities: Activity[];
 }
 
 export type MetadataTableType = "document" | "activity" | "materials";
 
 export interface MetadataTable {
-  metadata: LessonMetadata | ActivityMetadata | MaterialReferences;
+  metadata: DocumentMetadata | ActivityMetadata | MaterialReferences;
   type: MetadataTableType;
 }
 
@@ -127,6 +137,7 @@ export interface MaterialMetadata {
   audience: "teacher" | "student";
   access: "external" | "link" | "attached";
   link: string;
+  guidebook_type: string;
 }
 
 export interface MaterialContent {

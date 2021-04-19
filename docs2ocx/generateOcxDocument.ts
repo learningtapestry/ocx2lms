@@ -1,22 +1,21 @@
+import { DocumentTypes } from "./odellTypes";
 import { flatten } from "lodash";
 import { findDocumentIds, writeOcxDocument } from "./lcmsQueries";
-import { lessonToHtml, materialToHtml } from "./odellToHtml";
-import { lessonToOer, materialToOer } from "./odellToOer";
-import { lessonPath, materialPath } from "./paths";
-import { readLesson, readMaterial } from "./readOdellDocument";
+import { documentToHtml, materialToHtml } from "./odellToHtml";
+import { documentToOer, materialToOer } from "./odellToOer";
+import { lessonPath, materialPath, unitPath } from "./paths";
+import { readDocument, readMaterialDocument } from "./readOdellDocument";
 
 export async function generateDocument(documentId: string) {
-  const lesson = await readLesson(documentId);
-
-  if (lesson.metadata.type == "progressive") {
-    return;
-  }
+  const document = await readDocument(documentId);
 
   const resolvedMaterials = flatten(
-    lesson.activities.map((a) => a.materials.filter((m) => m.resolvedMaterial))
+    document.activities.map((a) =>
+      a.materials.filter((m) => m.resolvedMaterial)
+    )
   );
   for (const materialReference of resolvedMaterials) {
-    const material = await readMaterial(materialReference.id);
+    const material = await readMaterialDocument(materialReference.id);
     if (!material) {
       continue;
     }
@@ -32,14 +31,28 @@ export async function generateDocument(documentId: string) {
     );
   }
 
-  const ocx = lessonToOer(lesson);
+  const docType: DocumentTypes = document.metadata.type;
+
+  const ocx = documentToOer(document);
+
+  let path;
+
+  if (docType == "lesson") {
+    path = lessonPath(document, null, null);
+  } else if (docType == "overview") {
+    path = unitPath(document, null, null);
+  } else if (docType == "progressive") {
+    path = unitPath(document, null, "_progressive");
+  } else if (docType == "texts") {
+    path = unitPath(document, null, "_texts");
+  }
 
   await writeOcxDocument(
     documentId,
-    "lesson",
-    lessonPath(lesson, null, null),
+    docType,
+    path,
     ocx,
-    lessonToHtml(lesson, ocx)
+    documentToHtml(document, ocx)
   );
 }
 

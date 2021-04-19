@@ -1,10 +1,10 @@
 import { docs_v1 } from "googleapis";
 import getGoogleClient from "./googleClient";
 import { findDocumentId } from "./lcmsQueries";
-import parseLesson from "./parseLesson";
+import parseDocument from "./parseDocument";
 import parseMaterial from "./parseMaterial";
 
-export async function readLesson(documentId) {
+export async function readDocument(documentId) {
   const client = await getGoogleClient();
   const docs = new docs_v1.Docs({ auth: client });
 
@@ -12,7 +12,7 @@ export async function readLesson(documentId) {
     documentId,
   });
   const document = getDocumentResponse.data;
-  const lesson = await parseLesson(document);
+  const lesson = await parseDocument(document);
 
   for (const activity of lesson.activities) {
     for (const textId of activity.metadata.textsAsMaterialIds) {
@@ -24,14 +24,14 @@ export async function readLesson(documentId) {
     }
 
     for (const material of activity.materials) {
-      material.resolvedMaterial = await readMaterial(material.id);
+      material.resolvedMaterial = await readMaterialDocument(material.id);
     }
   }
 
   return lesson;
 }
 
-export async function readMaterial(materialId: string) {
+export async function readMaterialDocument(materialId: string) {
   const documentId = await findDocumentId(materialId);
 
   if (!documentId) {

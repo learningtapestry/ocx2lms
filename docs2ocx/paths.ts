@@ -1,12 +1,16 @@
 import { snakeCase } from "lodash";
-import { LessonDocument, MaterialReference } from "./odellTypes";
+import {
+  OdellDocument,
+  MaterialDocument,
+  MaterialReference,
+} from "./odellTypes";
 
 export function unitPath(
-  lesson: LessonDocument,
+  document: OdellDocument | MaterialDocument,
   prefix: string = null,
   extension: string = ".html"
 ) {
-  let path = `units/${lesson.metadata.grade}/${lesson.metadata.guidebook_type}`;
+  let path = `units/${document.metadata.grade}/${document.metadata.guidebook_type}`;
   if (extension) {
     path += extension;
   }
@@ -14,7 +18,7 @@ export function unitPath(
 }
 
 export function lessonPath(
-  lesson: LessonDocument,
+  lesson: OdellDocument,
   prefix: string = null,
   extension: string = ".html"
 ) {

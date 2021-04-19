@@ -1,16 +1,5 @@
+import { DocumentTypes } from "./odellTypes";
 import getClient from "./pgClient";
-
-type documentType = "material" | "lesson";
-
-const typeTables = {
-  material: "materials",
-  lesson: "documents",
-};
-
-const typeModels = {
-  material: "Lcms::Engine::Material",
-  lesson: "Lcms::Engine::Document",
-};
 
 export async function findDocumentIdByOdellId(odellId: number) {
   const client = await getClient();
@@ -28,12 +17,17 @@ export async function findDocumentIdByOdellId(odellId: number) {
   }
 }
 
-async function findOdellIdByDocumentId(documentId: string, type: documentType) {
+async function findOdellIdByDocumentId(
+  documentId: string,
+  type: DocumentTypes
+) {
   const client = await getClient();
+
+  const table = type == "material" ? "materials" : "documents";
 
   try {
     const result = await client.query(
-      `SELECT id FROM ${typeTables[type]} WHERE file_id = $1::text`,
+      `SELECT id FROM ${table} WHERE file_id = $1::text`,
       [documentId]
     );
     return result.rows[0].id;
@@ -46,14 +40,16 @@ async function findOdellIdByDocumentId(documentId: string, type: documentType) {
 
 export async function writeOcxDocument(
   documentId: string,
-  type: documentType,
+  type: DocumentTypes,
   path: string,
   document: any,
   html: string
 ) {
+  const typeModel =
+    type == "material" ? "Lcms::Engine::Material" : "Lcms::Engine::Document";
   const client = await getClient();
   const targetId = await findOdellIdByDocumentId(documentId, type);
-  const targetType = typeModels[type];
+  const targetType = typeModel;
   const query = `
     INSERT INTO
       ocx_documents (path, document_type, target_id, target_type, document, html, created_at, updated_at)
@@ -88,7 +84,9 @@ export async function findDocumentIds() {
   const client = await getClient();
 
   try {
-    const result = await client.query(`SELECT file_id FROM documents`);
+    const result = await client.query(
+      `SELECT file_id FROM documents WHERE ID > 35`
+    );
     return result.rows.map((row) => row.file_id);
   } catch (err) {
     return [];

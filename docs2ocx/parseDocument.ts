@@ -9,14 +9,14 @@ import {
   ActivityMetadata,
   ActivityMetadataKeys,
   DocumentMetadataKeys,
-  LessonDocument,
-  LessonMetadata,
+  OdellDocument,
   MaterialReference,
   MaterialReferences,
   MetadataTable,
   MetadataTableType,
   StudentContent,
   TeacherContent,
+  DocumentMetadata,
 } from "./odellTypes";
 import log from "./log";
 
@@ -39,7 +39,7 @@ function parseDocumentMetadata(
     document,
     tableElement.tableRows.slice(1),
     DocumentMetadataKeys
-  ) as LessonMetadata;
+  );
 }
 
 function parseActivityMetadata(
@@ -50,7 +50,7 @@ function parseActivityMetadata(
     document,
     tableElement.tableRows.slice(1),
     ActivityMetadataKeys
-  ) as LessonMetadata;
+  );
 }
 
 function parseMaterialIds(texts: string) {
@@ -99,7 +99,7 @@ function parseTable(
   tableElement: docs_v1.Schema$Table
 ): MetadataTable {
   let type: MetadataTableType;
-  let metadata: LessonMetadata | ActivityMetadata | MaterialReferences;
+  let metadata: DocumentMetadata | ActivityMetadata | MaterialReferences;
 
   const tableTitle = extractRawText(
     tableElement.tableRows[0].tableCells[0].content
@@ -107,10 +107,16 @@ function parseTable(
 
   if (tableTitle == "document-metadata") {
     type = "document";
-    metadata = parseDocumentMetadata(document, tableElement);
+    metadata = parseDocumentMetadata(
+      document,
+      tableElement
+    ) as DocumentMetadata;
   } else if (tableTitle == "activity-metadata") {
     type = "activity";
-    metadata = parseActivityMetadata(document, tableElement);
+    metadata = parseActivityMetadata(
+      document,
+      tableElement
+    ) as ActivityMetadata;
   } else if (tableTitle == "[materials]") {
     type = "materials";
     metadata = parseMaterialReferences(document, tableElement);
@@ -126,10 +132,10 @@ function parseTable(
   return null;
 }
 
-export default async function parseLesson(
+export default async function parseDocument(
   document: docs_v1.Schema$Document
-): Promise<LessonDocument> {
-  let documentMetadata: LessonMetadata = null;
+): Promise<OdellDocument> {
+  let documentMetadata: DocumentMetadata = null;
   const activities: Activity[] = [];
   let contentState: ContentState = null;
   let currentActivity: Activity = null;
@@ -216,7 +222,7 @@ export default async function parseLesson(
             ...(table.metadata as MaterialReferences).materials
           );
         } else if (table.type == "document") {
-          documentMetadata = table.metadata as LessonMetadata;
+          documentMetadata = table.metadata as DocumentMetadata;
         }
       }
     }

@@ -1,7 +1,25 @@
 import { snakeCase, uniq } from "lodash";
 import { lessonPath, materialPath, unitPath } from "./paths";
-import { Activity, LessonDocument, MaterialReference } from "./odellTypes";
+import { Activity, OdellDocument, MaterialReference } from "./odellTypes";
 import config from "./config";
+
+const buildGraph = (elements: any[]): Record<string, any> => {
+  const jsonLd = {};
+
+  jsonLd["@context"] = [
+    "http://schema.org/",
+    {
+      oer: "http://oerschema.org/",
+      ocx: "https://github.com/K12OCX/k12ocx-specs/",
+      asn: "http://purl.org/ASN/schema/core/",
+    },
+  ];
+
+  return {
+    ...jsonLd,
+    "@graph": elements,
+  };
+};
 
 const buildJsonLd = (
   type: string | Array<string>,
@@ -16,6 +34,7 @@ const buildJsonLd = (
       {
         oer: "http://oerschema.org/",
         ocx: "https://github.com/K12OCX/k12ocx-specs/",
+        asn: "http://purl.org/ASN/schema/core/",
       },
     ];
   }
@@ -27,74 +46,38 @@ const buildJsonLd = (
   };
 };
 
-const lessonName = (lesson: LessonDocument) =>
+const lessonName = (lesson: OdellDocument) =>
   `S${lesson.metadata.section}_L${lesson.metadata.lesson}`;
 
-const activityName = (lesson: LessonDocument, activity: Activity) => {
-  let title = `S${lesson.metadata.section}_L${lesson.metadata.lesson}_A${activity.metadata.activity}:`;
-  if (activity.metadata.activity_type == "optional") {
-    title += " (OPTIONAL)";
+const unitName = (unit: OdellDocument) =>
+  `${unit.metadata.guidebook_title.toLocaleUpperCase()}: ${
+    unit.metadata.guidebook_title
+  }`;
+
+const activityName = (document: OdellDocument, activity: Activity) => {
+  let title = "";
+
+  if (document.metadata.type == "overview") {
+    if (activity.metadata.activity_type == "optional") {
+      title += "(OPTIONAL) ";
+    }
+    title += activity.metadata.activity_title;
+  } else {
+    title += `S${document.metadata.section}_L${document.metadata.lesson}_A${activity.metadata.activity}:`;
+    if (activity.metadata.activity_type == "optional") {
+      title += " (OPTIONAL)";
+    }
+    title += ` ${activity.metadata.activity_title}`;
   }
-  title += ` ${activity.metadata.activity_title}`;
+
   return title;
 };
 
 const materialName = (material: MaterialReference) =>
   material.resolvedMaterial.metadata.title;
 
-const buildLesson = (lesson: LessonDocument) => {
-  const lessonJson = buildJsonLd("oer:Lesson", {
-    "@id": lessonPath(lesson, config.baseOcxPath),
-  });
-  if (lesson.metadata.grade) {
-    lessonJson.educationalAlignment = {
-      "@type": "AlignmentObject",
-      alignmentType: "Educational level",
-      educationalFramework: "US Grade Levels",
-      targetName: lesson.metadata.grade,
-      targetUrl: {
-        "@id": `http://purl.org/ASN/scheme/ASNEducationLevel/${lesson.metadata.grade}`,
-      },
-    };
-  }
-  const partOf = [];
-  if (lesson.metadata.guidebook_type) {
-    partOf.push({
-      "@type": "oer:Unit",
-      "@id": unitPath(lesson, config.baseOcxPath),
-      name: lesson.metadata.guidebook_title,
-    });
-  }
-  lessonJson.isPartOf = partOf;
-
-  let description = lesson.metadata.lesson_description;
-
-  if (lesson.metadata.lesson_look_fors) {
-    description += `<br />${lesson.metadata.lesson_look_fors}`;
-  }
-
-  if (description) {
-    lessonJson.description = description;
-  }
-
-  if (lesson.metadata.lesson_type == "optional") {
-    lessonJson.educationalUse = "optional";
-  }
-
-  lessonJson.name = lessonName(lesson);
-
-  const activities = [];
-  let i = 0;
-  for (const activity of lesson.activities) {
-    activities.push(buildActivity(lesson, activity, ++i));
-  }
-  lessonJson.hasPart = activities;
-
-  return lessonJson;
-};
-
 const buildActivity = (
-  lesson: LessonDocument,
+  lesson: OdellDocument,
   activity: Activity,
   index: number,
   includeContext = false
@@ -161,11 +144,136 @@ export function materialToOer(
     } else if (!includeContext) {
       materialJson.url = referenceId;
     }
+
+    if (includeContext) {
+      materialJson.isPartOf = {
+        "@type": "oer:Unit",
+        "@id": unitPath(material.resolvedMaterial, config.baseOcxPath),
+      };
+    }
   }
 
   return materialJson;
 }
 
-export function lessonToOer(lesson: LessonDocument) {
-  return buildLesson(lesson);
+const buildOverview = (document: OdellDocument) => {
+  const json = buildJsonLd("oer:Unit", {
+    "@id": unitPath(document, config.baseOcxPath),
+  });
+  if (document.metadata.grade) {
+    json.educationalAlignment = {
+      "@type": "AlignmentObject",
+      alignmentType: "Educational level",
+      educationalFramework: "US Grade Levels",
+      targetName: document.metadata.grade,
+      targetUrl: {
+        "@id": `http://purl.org/ASN/scheme/ASNEducationLevel/${document.metadata.grade}`,
+      },
+    };
+  }
+
+  let description = document.metadata.description;
+
+  if (document.metadata.look_fors) {
+    description += `<br />${document.metadata.lesson_look_fors}`;
+  }
+
+  if (description) {
+    json.description = description;
+  }
+
+  if (document.metadata.lesson_type == "optional") {
+    json.educationalUse = "optional";
+  }
+
+  json.name = unitName(document);
+
+  const activities = [];
+  let i = 0;
+  for (const activity of document.activities) {
+    activities.push(buildActivity(document, activity, ++i));
+  }
+  json.hasPart = activities;
+
+  return json;
+};
+
+const buildProgressiveAssignments = (document: OdellDocument) => {
+  const unitRef = {
+    "@type": "oer:Unit",
+    "@id": unitPath(document, config.baseOcxPath),
+    name: document.metadata.guidebook_title,
+  };
+  const activities = [];
+  let i = 0;
+  for (const activity of document.activities) {
+    const activityJson = buildActivity(document, activity, ++i);
+    activityJson.isPartOf = unitRef;
+    activities.push(activityJson);
+  }
+  return buildGraph(activities);
+};
+
+const buildLesson = (lesson: OdellDocument) => {
+  const lessonJson = buildJsonLd("oer:Lesson", {
+    "@id": lessonPath(lesson, config.baseOcxPath),
+  });
+  if (lesson.metadata.grade) {
+    lessonJson.educationalAlignment = {
+      "@type": "AlignmentObject",
+      alignmentType: "Educational level",
+      educationalFramework: "US Grade Levels",
+      targetName: lesson.metadata.grade,
+      targetUrl: {
+        "@id": `http://purl.org/ASN/scheme/ASNEducationLevel/${lesson.metadata.grade}`,
+      },
+    };
+  }
+  const partOf = [];
+  if (lesson.metadata.guidebook_type) {
+    partOf.push({
+      "@type": "oer:Unit",
+      "@id": unitPath(lesson, config.baseOcxPath),
+      name: lesson.metadata.guidebook_title,
+    });
+  }
+  lessonJson.isPartOf = partOf;
+
+  let description = lesson.metadata.lesson_description;
+
+  if (lesson.metadata.lesson_look_fors) {
+    description += `<br />${lesson.metadata.lesson_look_fors}`;
+  }
+
+  if (description) {
+    lessonJson.description = description;
+  }
+
+  if (lesson.metadata.lesson_type == "optional") {
+    lessonJson.educationalUse = "optional";
+  }
+
+  lessonJson.name = lessonName(lesson);
+
+  const activities = [];
+  let i = 0;
+  for (const activity of lesson.activities) {
+    activities.push(buildActivity(lesson, activity, ++i));
+  }
+  lessonJson.hasPart = activities;
+
+  return lessonJson;
+};
+
+export function documentToOer(document: OdellDocument) {
+  const docType = document.metadata.type;
+  if (docType == "overview") {
+    return buildOverview(document);
+  } else if (docType == "lesson") {
+    return buildLesson(document);
+  } else if (docType == "progressive") {
+    return buildProgressiveAssignments(document);
+  }
+
+  throw new Error(`Unknown document type: ${document.metadata.type}`);
 }

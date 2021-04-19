@@ -1,4 +1,4 @@
-import { LessonDocument, MaterialReference } from "./odellTypes";
+import { OdellDocument, MaterialReference } from "./odellTypes";
 import { snakeCase } from "lodash";
 import { format } from "prettier";
 
@@ -30,8 +30,8 @@ export function materialToHtml(
   </html>`);
 }
 
-export function lessonToHtml(
-  lesson: LessonDocument,
+export function documentToHtml(
+  lesson: OdellDocument,
   jsonLd: Record<string, any>
 ) {
   const html = [];
