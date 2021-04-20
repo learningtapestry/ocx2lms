@@ -40,14 +40,10 @@ export const MaterialMetadataKeys = {
   audience: "audience",
   access: "access",
   link: "link",
+  "guidebook-type": "guidebook_type",
 };
 
-export type DocumentTypes =
-  | "material"
-  | "lesson"
-  | "progressive"
-  | "texts"
-  | "overview";
+export type DocumentTypes = "material" | "lesson" | "unit" | "progressive";
 
 export interface DocumentMetadata {
   description: string;

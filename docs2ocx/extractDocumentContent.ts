@@ -492,7 +492,6 @@ class GoogleDocument {
       .replace(/^\n|\n$/g, "")
       .split("\n");
 
-    // "".split() -> [""]
     if (codeContent.length === 1 && codeContent[0] === "") return;
 
     let lang = null;

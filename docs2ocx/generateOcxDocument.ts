@@ -31,20 +31,16 @@ export async function generateDocument(documentId: string) {
     );
   }
 
+  const ocx = documentToOer(document);
   const docType: DocumentTypes = document.metadata.type;
 
-  const ocx = documentToOer(document);
-
   let path;
-
   if (docType == "lesson") {
     path = lessonPath(document, null, null);
-  } else if (docType == "overview") {
+  } else if (docType == "unit") {
     path = unitPath(document, null, null);
   } else if (docType == "progressive") {
     path = unitPath(document, null, "_progressive");
-  } else if (docType == "texts") {
-    path = unitPath(document, null, "_texts");
   }
 
   await writeOcxDocument(

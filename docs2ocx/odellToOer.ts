@@ -2,6 +2,7 @@ import { snakeCase, uniq } from "lodash";
 import { lessonPath, materialPath, unitPath } from "./paths";
 import { Activity, OdellDocument, MaterialReference } from "./odellTypes";
 import config from "./config";
+import { dasherize, splitCommaSepValues } from "./util";
 
 const buildGraph = (elements: any[]): Record<string, any> => {
   const jsonLd = {};
@@ -57,7 +58,7 @@ const unitName = (unit: OdellDocument) =>
 const activityName = (document: OdellDocument, activity: Activity) => {
   let title = "";
 
-  if (document.metadata.type == "overview") {
+  if (document.metadata.type == "unit") {
     if (activity.metadata.activity_type == "optional") {
       title += "(OPTIONAL) ";
     }
@@ -88,6 +89,7 @@ const buildActivity = (
       activity.metadata.progressive_assignment_group?.length
         ? "progressive"
         : null,
+      dasherize(activity.metadata.assignment_modality),
     ].filter((u) => u)
   );
   const activityJson = buildJsonLd(
@@ -107,6 +109,15 @@ const buildActivity = (
     materials.push(materialToOer(material, false));
   }
   activityJson["ocx:material"] = materials;
+
+  const alignments = splitCommaSepValues(activity.metadata.alignment);
+  if (alignments.length) {
+    activityJson.educationalAlignment = alignments.map((alignmentName) => ({
+      "@type": "AlignmentObject",
+      targetName: alignmentName,
+      educationFramework: "CommonCoreStandard",
+    }));
+  }
 
   return activityJson;
 };
@@ -156,7 +167,7 @@ export function materialToOer(
   return materialJson;
 }
 
-const buildOverview = (document: OdellDocument) => {
+const buildUnit = (document: OdellDocument) => {
   const json = buildJsonLd("oer:Unit", {
     "@id": unitPath(document, config.baseOcxPath),
   });
@@ -267,8 +278,8 @@ const buildLesson = (lesson: OdellDocument) => {
 
 export function documentToOer(document: OdellDocument) {
   const docType = document.metadata.type;
-  if (docType == "overview") {
-    return buildOverview(document);
+  if (docType == "unit") {
+    return buildUnit(document);
   } else if (docType == "lesson") {
     return buildLesson(document);
   } else if (docType == "progressive") {

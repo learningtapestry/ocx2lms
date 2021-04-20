@@ -84,9 +84,7 @@ export async function findDocumentIds() {
   const client = await getClient();
 
   try {
-    const result = await client.query(
-      `SELECT file_id FROM documents WHERE ID > 35`
-    );
+    const result = await client.query(`SELECT file_id FROM documents`);
     return result.rows.map((row) => row.file_id);
   } catch (err) {
     return [];

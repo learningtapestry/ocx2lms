@@ -19,6 +19,7 @@ import {
   DocumentMetadata,
 } from "./odellTypes";
 import log from "./log";
+import { splitCommaSepValues } from "./util";
 
 type ContentState = null | "STUDENT_CONTENT" | "TEACHER_CONTENT";
 
@@ -74,9 +75,9 @@ function parseMaterialReferences(
   for (const row of tableElement.tableRows.slice(2)) {
     const materialId = extractRawText(row.tableCells[0].content);
     const accessType = extractRawText(row.tableCells[1].content);
-    const locations = extractRawText(row.tableCells[2].content)
-      .split(",")
-      .map((l) => l.trim());
+    const locations = splitCommaSepValues(
+      extractRawText(row.tableCells[2].content)
+    );
 
     if (materialId.length === 0) {
       continue;
