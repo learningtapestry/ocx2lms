@@ -43,7 +43,7 @@ export const MaterialMetadataKeys = {
   "guidebook-type": "guidebook_type",
 };
 
-export type DocumentTypes = "material" | "lesson" | "unit" | "progressive";
+export type DocumentTypes = "material" | "lesson" | "unit";
 
 export interface DocumentMetadata {
   description: string;

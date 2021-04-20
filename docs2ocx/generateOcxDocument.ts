@@ -39,8 +39,6 @@ export async function generateDocument(documentId: string) {
     path = lessonPath(document, null, null);
   } else if (docType == "unit") {
     path = unitPath(document, null, null);
-  } else if (docType == "progressive") {
-    path = unitPath(document, null, "_progressive");
   }
 
   await writeOcxDocument(

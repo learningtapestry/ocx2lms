@@ -282,8 +282,6 @@ export function documentToOer(document: OdellDocument) {
     return buildUnit(document);
   } else if (docType == "lesson") {
     return buildLesson(document);
-  } else if (docType == "progressive") {
-    return buildProgressiveAssignments(document);
   }
 
   throw new Error(`Unknown document type: ${document.metadata.type}`);
