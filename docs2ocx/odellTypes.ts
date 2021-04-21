@@ -45,6 +45,12 @@ export const MaterialMetadataKeys = {
 
 export type DocumentTypes = "material" | "lesson" | "unit";
 
+export type AssignmentOutcomeTypes =
+  | "completed"
+  | "submitted"
+  | "graded"
+  | "rubric";
+
 export interface DocumentMetadata {
   description: string;
   type: DocumentTypes;

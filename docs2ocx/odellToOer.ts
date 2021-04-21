@@ -1,6 +1,11 @@
 import { snakeCase, uniq } from "lodash";
 import { lessonPath, materialPath, unitPath } from "./paths";
-import { Activity, OdellDocument, MaterialReference } from "./odellTypes";
+import {
+  Activity,
+  OdellDocument,
+  MaterialReference,
+  AssignmentOutcomeTypes,
+} from "./odellTypes";
 import config from "./config";
 import { dasherize, splitCommaSepValues } from "./util";
 
@@ -117,6 +122,36 @@ const buildActivity = (
       targetName: alignmentName,
       educationFramework: "CommonCoreStandard",
     }));
+  }
+
+  if (activity.metadata.total_points) {
+    activityJson.award = activity.metadata.total_points;
+  }
+
+  const asgOutcome: AssignmentOutcomeTypes = activity.metadata.assignment_outcome?.toLocaleLowerCase() as AssignmentOutcomeTypes;
+
+  if (asgOutcome == "completed" || asgOutcome == "submitted") {
+    activityJson.gradingFormat = {
+      "@type": "oer:CompletionGradeFormat",
+    };
+  } else if (asgOutcome == "graded") {
+    activityJson.gradingFormat = {
+      "@type": "oer:PointGradeFormat",
+    };
+  } else if (asgOutcome == "rubric") {
+    const rubricId = dasherize(activity.metadata.rubric_id);
+    if (rubricId) {
+      const url = unitPath(
+        lesson,
+        config.baseOcxPath,
+        `_rubric_${rubricId}.html`
+      );
+      activityJson.gradingFormat = {
+        "@type": "asn:Rubric",
+        "@id": url,
+        url: url,
+      };
+    }
   }
 
   return activityJson;
