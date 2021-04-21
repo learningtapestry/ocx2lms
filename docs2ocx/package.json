@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "dev-start": "npm run build && node dist/index.js",
-    "generate-by-id": "node dist/generateByOdellDocumentId.js"
+    "generate-all-documents": "node dist/commands/generateAllDocuments.js",
+    "generate-by-id": "node dist/commands/generateByOdellDocumentId.js"
   },
   "author": "",
   "license": "ISC",

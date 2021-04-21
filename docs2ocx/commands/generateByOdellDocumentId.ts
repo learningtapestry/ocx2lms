@@ -1,5 +1,5 @@
-import { generateDocument } from "./generateOcxDocument";
-import { findDocumentIdByOdellId } from "./lcmsQueries";
+import { generateDocument } from "../generateOcxDocument";
+import { findDocumentIdByOdellId } from "../lcmsQueries";
 
 const generateByOdellDocumentId = async (odellId: number) => {
   const docId = await findDocumentIdByOdellId(odellId);
