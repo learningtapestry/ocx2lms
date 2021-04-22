@@ -295,6 +295,7 @@ The `oer:AssociatedMaterial` type represents a material associated with an educa
   - `progressive`: the material is worked on throughout the class, and not as a one-off task.
   - `assessment`: the material is an assessment.
   - `link`: the material is a link to an external resource.
+  - `text`: the material is a reference text.
 
 - `ocx:collaborationType`
 

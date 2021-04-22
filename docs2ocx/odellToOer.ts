@@ -170,15 +170,19 @@ export function materialToOer(
     {
       "@id": referenceId,
       educationalUse: material?.resolvedMaterial?.metadata?.material_type,
-      "ocx:collaborationType": material?.accessType?.toLocaleLowerCase(),
     },
     includeContext
   );
 
+  const accessType = material?.accessType?.toLocaleLowerCase()?.trim();
+  if (["individual-submission", "shared-submission"].includes(accessType)) {
+    materialJson["ocx:collaborationType"] = accessType;
+  }
+
   if (material.resolvedMaterial) {
     materialJson.name = materialName(material);
 
-    if (material.accessType == "link") {
+    if (accessType == "link") {
       materialJson.url = material.resolvedMaterial.metadata.link;
     } else if (!includeContext) {
       materialJson.url = referenceId;
