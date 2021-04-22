@@ -88,21 +88,20 @@ const buildActivity = (
   index: number,
   includeContext = false
 ) => {
-  const uses = uniq(
-    [
-      activity.metadata.activity_type.toLocaleLowerCase(),
-      activity.metadata.progressive_assignment_group?.length
-        ? "progressive"
-        : null,
-      dasherize(activity.metadata.assignment_modality),
-    ].filter((u) => u)
-  );
+  const type =
+    activity.metadata.activity_type == "assessment"
+      ? "oer:Assessment"
+      : "oer:Activity";
   const activityJson = buildJsonLd(
-    "oer:Activity",
+    type,
     {
       "@id": `#Activity_${index}`,
       name: activityName(lesson, activity),
-      educationalUse: uses,
+      educationalUse: activity.metadata.activity_type.toLocaleLowerCase(),
+      "ocx:assignmentModality": dasherize(
+        activity.metadata.assignment_modality
+      ),
+      "ocx:collaborationType": dasherize(activity.metadata.assignment_method),
     },
     includeContext
   );
@@ -125,17 +124,17 @@ const buildActivity = (
   }
 
   if (activity.metadata.total_points) {
-    activityJson.award = activity.metadata.total_points;
+    activityJson["ocx:points"] = parseInt(activity.metadata.total_points);
   }
 
   const asgOutcome: AssignmentOutcomeTypes = activity.metadata.assignment_outcome?.toLocaleLowerCase() as AssignmentOutcomeTypes;
 
   if (asgOutcome == "completed" || asgOutcome == "submitted") {
-    activityJson.gradingFormat = {
+    activityJson["oer:gradingFormat"] = {
       "@type": "oer:CompletionGradeFormat",
     };
   } else if (asgOutcome == "graded") {
-    activityJson.gradingFormat = {
+    activityJson["oer:gradingFormat"] = {
       "@type": "oer:PointGradeFormat",
     };
   } else if (asgOutcome == "rubric") {
@@ -146,7 +145,7 @@ const buildActivity = (
         config.baseOcxPath,
         `_rubric_${rubricId}.html`
       );
-      activityJson.gradingFormat = {
+      activityJson["oer:gradingFormat"] = {
         "@type": "asn:Rubric",
         "@id": url,
         url: url,
@@ -161,13 +160,6 @@ export function materialToOer(
   material: MaterialReference,
   includeContext = true
 ) {
-  const uses = uniq(
-    [
-      material.accessType.toLocaleLowerCase(),
-      material?.resolvedMaterial?.metadata?.material_type,
-    ].filter((m) => m)
-  );
-
   const id = `Material_${snakeCase(material.id.toLocaleLowerCase())}`;
   const referenceId = includeContext
     ? `#${id}`
@@ -177,7 +169,8 @@ export function materialToOer(
     "oer:SupportingMaterial",
     {
       "@id": referenceId,
-      educationalUse: uses,
+      educationalUse: material?.resolvedMaterial?.metadata?.material_type,
+      "ocx:collaborationType": material?.accessType?.toLocaleLowerCase(),
     },
     includeContext
   );
@@ -229,7 +222,7 @@ const buildUnit = (document: OdellDocument) => {
   }
 
   if (document.metadata.lesson_type == "optional") {
-    json.educationalUse = "optional";
+    json["ocx:optionality"] = "optional";
   }
 
   json.name = unitName(document);
@@ -242,22 +235,6 @@ const buildUnit = (document: OdellDocument) => {
   json.hasPart = activities;
 
   return json;
-};
-
-const buildProgressiveAssignments = (document: OdellDocument) => {
-  const unitRef = {
-    "@type": "oer:Unit",
-    "@id": unitPath(document, config.baseOcxPath),
-    name: document.metadata.guidebook_title,
-  };
-  const activities = [];
-  let i = 0;
-  for (const activity of document.activities) {
-    const activityJson = buildActivity(document, activity, ++i);
-    activityJson.isPartOf = unitRef;
-    activities.push(activityJson);
-  }
-  return buildGraph(activities);
 };
 
 const buildLesson = (lesson: OdellDocument) => {
@@ -296,7 +273,7 @@ const buildLesson = (lesson: OdellDocument) => {
   }
 
   if (lesson.metadata.lesson_type == "optional") {
-    lessonJson.educationalUse = "optional";
+    lessonJson["ocx:optionality"] = "optional";
   }
 
   lessonJson.name = lessonName(lesson);

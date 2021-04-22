@@ -60,10 +60,6 @@ The `oer:Unit` type describes a grouping of lessons.
 
   Describes the unit's role in the curriculum.
 
-  Special values:
-
-  - `optional`: the unit is optional.
-
 - `isPartOf`
 
   Used for defining a relationship between the lesson and a higher level entity, like a module.
@@ -84,13 +80,19 @@ The `oer:Unit` type describes a grouping of lessons.
 
   When the unit is part of a grouping of units, it can have a position.
 
+- `oer:forTopic`
+
+  References a topic, a thematic grouping, if the unit is attached to one.
+
 - `ocx:material`
 
   References matterials attached to the unit.
 
-- `forTopic`
+- `ocx:optionality`
 
-  References a topic, a thematic grouping, if the unit is attached to one.
+  Whether the unit is optional.
+
+  Special values: `optional`
 
 ### Lesson
 
@@ -129,10 +131,6 @@ The `oer:Lesson` type describes a lesson in the curriculum.
 
   Describes the lesson's role in the curriculum.
 
-  Special values:
-
-  - `optional`: the lesson is optional.
-
 - `isPartOf`
 
   Used for defining a relationship between the lesson and a higher level entity, like an unit.
@@ -153,17 +151,25 @@ The `oer:Lesson` type describes a lesson in the curriculum.
 
   When the lesson is part of a grouping of lessons, it can have a position.
 
+- `oer:forTopic`
+
+  References a topic, a thematic grouping, if the lesson is attached to one.
+
 - `ocx:material`
 
   References matterials attached to the lesson.
 
-- `forTopic`
+- `ocx:optionality`
 
-  References a topic, a thematic grouping, if the lesson is attached to one.
+  Whether the unit is optional.
 
-### Activity
+  Special values: `optional`
+
+### Activity | Assessment
 
 The `oer:Activity` type represents an educational activity - classwork for a lesson.
+
+The `oer:Assessment` type shares the same properties as the `oer:Activity`.
 
 - `@id`
 
@@ -187,25 +193,30 @@ The `oer:Activity` type represents an educational activity - classwork for a les
 
   Special values:
 
-  - `optional`: the activity is optional.
   - `progressive`: the activity is worked on throughout the class, and not as a one-off task.
-  - `assessment`: the activity is an assessment.
-  - `independent`: the activity is worked on individually by a student.
-  - `pair`: the activity is worked on by a pair of students.
-  - `group`: the activity is worked on by a group of students.
-  - `class`: the activity is worked on by the entire class.
+  - `texts`: the activity is a reference text.
 
 - `timeRequired`
 
   How much time the activity takes to be completed.
 
-- `gradingFormat`
+- `oer:gradingFormat`
 
   How the activity should be graded.
 
   Must always be a `oer:GradeFormat`. May reference one by ID.
 
-- `award`
+- `oer:forTopic`
+
+  References a topic, a thematic grouping, if the activity is attached to one.
+
+- `ocx:optionality`
+
+  Whether the activity is optional.
+
+  Special values: `optional`
+
+- `ocx:totalPoints`
 
   How many points the activity is worth when grading.
 
@@ -213,9 +224,22 @@ The `oer:Activity` type represents an educational activity - classwork for a les
 
   References matterials attached to the activity.
 
-- `forTopic`
+- `ocx:assignmentModality`
 
-  References a topic, a thematic grouping, if the activity is attached to one.
+  Describes the way an assignment is presented.
+
+  Special values: `read-listen`, `annotation`, `discussion`, `graphic `organizer`, `short `answer`, `essay`, `presentation`, `multiple choice`
+
+- `ocx:collaborationType`
+
+  Describes how an activity is collaborated on.
+
+  Special values:
+
+  - `independent`: the activity is worked on individually by a student.
+  - `pair`: the activity is worked on by a pair of students.
+  - `group`: the activity is worked on by a group of students.
+  - `class`: the activity is worked on by the entire class.
 
 ### Topic
 
@@ -268,11 +292,16 @@ The `oer:AssociatedMaterial` type represents a material associated with an educa
   Special values:
 
   - `assignment`: the material is an assignment template.
-  - `individual-submission`: the assignment will be submitted by a single student.
-  - `shared-submission`: the assignment is worked on by the entire class.
   - `progressive`: the material is worked on throughout the class, and not as a one-off task.
   - `assessment`: the material is an assessment.
   - `link`: the material is a link to an external resource.
+
+- `ocx:collaborationType`
+
+  Describes how the material is collaborated on.
+
+  - `individual-submission`: the assignment will be submitted by a single student.
+  - `shared-submission`: the assignment is worked on by more than one student.
 
 - `url`
 
