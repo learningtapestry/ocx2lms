@@ -23,7 +23,7 @@ export function materialToHtml(
       </script>
     </head>
     <body>
-      <section id="${snakeCase(material.id.toLocaleLowerCase())}">
+      <section id="Material_${snakeCase(material.id.toLocaleLowerCase())}">
         ${material.resolvedMaterial?.content?.content}
       </section>
     </body>
