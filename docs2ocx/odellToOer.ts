@@ -1,4 +1,4 @@
-import { snakeCase, uniq } from "lodash";
+import { snakeCase, sortBy, uniq } from "lodash";
 import { lessonPath, materialPath, unitPath } from "./paths";
 import {
   Activity,
@@ -243,23 +243,27 @@ const buildUnit = async (document: OdellDocument) => {
     document.metadata.guidebook_type
   );
 
-  const lessonUrls = unitLessons.map((lesson) => {
-    const url = lessonPath(
-      {
-        metadata: {
-          grade: document.metadata.grade,
-          guidebook_type: document.metadata.guidebook_type,
-          lesson,
+  const lessonUrls = sortBy(
+    unitLessons.map((lesson) => {
+      const url = lessonPath(
+        {
+          metadata: {
+            grade: document.metadata.grade,
+            guidebook_type: document.metadata.guidebook_type,
+            lesson,
+          },
         },
-      },
-      config.baseOcxPath
-    );
-    return {
-      "@type": "oer:Lesson",
-      "@id": url,
-      url,
-    };
-  });
+        config.baseOcxPath
+      );
+      return {
+        "@type": "oer:Lesson",
+        "@id": url,
+        url,
+        position: parseInt(lesson),
+      };
+    }),
+    [(l) => l.position]
+  );
 
   json.hasPart = activities.concat(lessonUrls);
 
