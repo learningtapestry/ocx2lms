@@ -110,3 +110,29 @@ export async function findDocumentId(materialId: string) {
     client.release();
   }
 }
+
+export async function findUnitLessons(
+  grade: string,
+  unit: string
+): Promise<string[]> {
+  const client = await getClient();
+  const query = `
+    SELECT
+      id, file_id, metadata ->> 'lesson' AS lesson
+    FROM
+      documents
+    WHERE
+      metadata ->> 'type' = 'lesson'
+      AND metadata ->> 'grade' = concat('grade ', $1::text)
+      AND metadata ->> 'guidebook-type' = $2::text
+  `;
+
+  try {
+    const result = await client.query(query, [grade, unit]);
+    return result.rows.map((r) => r.lesson);
+  } catch (err) {
+    return [];
+  } finally {
+    client.release();
+  }
+}

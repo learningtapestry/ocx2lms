@@ -5,8 +5,16 @@ import {
   MaterialReference,
 } from "./odellTypes";
 
+export interface PathParams {
+  metadata: {
+    grade: string;
+    guidebook_type: string;
+    lesson?: string;
+  };
+}
+
 export function unitPath(
-  document: OdellDocument | MaterialDocument,
+  document: PathParams,
   prefix: string = null,
   extension: string = ".html"
 ) {
@@ -18,7 +26,7 @@ export function unitPath(
 }
 
 export function lessonPath(
-  lesson: OdellDocument,
+  lesson: PathParams,
   prefix: string = null,
   extension: string = ".html"
 ) {

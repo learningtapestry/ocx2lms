@@ -8,6 +8,7 @@ import {
 } from "./odellTypes";
 import config from "./config";
 import { dasherize, splitCommaSepValues } from "./util";
+import { findUnitLessons } from "./lcmsQueries";
 
 const buildGraph = (elements: any[]): Record<string, any> => {
   const jsonLd = {};
@@ -199,7 +200,7 @@ export function materialToOer(
   return materialJson;
 }
 
-const buildUnit = (document: OdellDocument) => {
+const buildUnit = async (document: OdellDocument) => {
   const json = buildJsonLd("oer:Unit", {
     "@id": unitPath(document, config.baseOcxPath),
   });
@@ -236,7 +237,31 @@ const buildUnit = (document: OdellDocument) => {
   for (const activity of document.activities) {
     activities.push(buildActivity(document, activity, ++i));
   }
-  json.hasPart = activities;
+
+  const unitLessons = await findUnitLessons(
+    document.metadata.grade,
+    document.metadata.guidebook_type
+  );
+
+  const lessonUrls = unitLessons.map((lesson) => {
+    const url = lessonPath(
+      {
+        metadata: {
+          grade: document.metadata.grade,
+          guidebook_type: document.metadata.guidebook_type,
+          lesson,
+        },
+      },
+      config.baseOcxPath
+    );
+    return {
+      "@type": "oer:Lesson",
+      "@id": url,
+      url,
+    };
+  });
+
+  json.hasPart = activities.concat(lessonUrls);
 
   return json;
 };
@@ -292,7 +317,7 @@ const buildLesson = (lesson: OdellDocument) => {
   return lessonJson;
 };
 
-export function documentToOer(document: OdellDocument) {
+export async function documentToOer(document: OdellDocument) {
   const docType = document.metadata.type;
   if (docType == "unit") {
     return buildUnit(document);

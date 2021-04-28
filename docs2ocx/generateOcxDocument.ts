@@ -31,7 +31,7 @@ export async function generateDocument(documentId: string) {
     );
   }
 
-  const ocx = documentToOer(document);
+  const ocx = await documentToOer(document);
   const docType: DocumentTypes = document.metadata.type;
 
   let path;
