@@ -2,7 +2,7 @@ import { DocumentTypes } from "./odellTypes";
 import { flatten } from "lodash";
 import { findDocumentIds, writeOcxDocument } from "./lcmsQueries";
 import { documentToHtml, materialToHtml } from "./odellToHtml";
-import { documentToOer, materialToOer } from "./odellToOer";
+import { documentToOcx, materialToOcx } from "./odellToOcx";
 import { lessonPath, materialPath, unitPath } from "./paths";
 import { readDocument, readMaterialDocument } from "./readOdellDocument";
 
@@ -20,7 +20,7 @@ export async function generateDocument(documentId: string) {
       continue;
     }
 
-    const ocx = materialToOer(materialReference);
+    const ocx = materialToOcx(materialReference);
 
     await writeOcxDocument(
       material.documentId,
@@ -31,7 +31,7 @@ export async function generateDocument(documentId: string) {
     );
   }
 
-  const ocx = await documentToOer(document);
+  const ocx = await documentToOcx(document);
   const docType: DocumentTypes = document.metadata.type;
 
   let path;

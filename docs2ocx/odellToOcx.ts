@@ -111,7 +111,7 @@ const buildActivity = (
   }
   const materials = [];
   for (const material of activity.materials) {
-    materials.push(materialToOer(material, false));
+    materials.push(materialToOcx(material, false));
   }
   activityJson["ocx:material"] = materials;
 
@@ -157,7 +157,7 @@ const buildActivity = (
   return activityJson;
 };
 
-export function materialToOer(
+export function materialToOcx(
   material: MaterialReference,
   includeContext = true
 ) {
@@ -321,7 +321,7 @@ const buildLesson = (lesson: OdellDocument) => {
   return lessonJson;
 };
 
-export async function documentToOer(document: OdellDocument) {
+export async function documentToOcx(document: OdellDocument) {
   const docType = document.metadata.type;
   if (docType == "unit") {
     return buildUnit(document);
