@@ -11,7 +11,7 @@ export async function googleDrive(session: Session) {
   return new drive_v3.Drive({ auth });
 }
 
-export async function createFolder(session: Session, name: string) {
+export async function createFolder(session: Session, name: string): Promise<string> {
   const drive = await googleDrive(session);
   const folder = await drive.files.create({
     requestBody: {
@@ -28,7 +28,7 @@ export async function htmlToGoogleDoc(
   folderId: string,
   fileName: string,
   html: string
-) {
+): Promise<string> {
   const drive = await googleDrive(session);
   var htmlMedia = {
     mimeType: "text/html",

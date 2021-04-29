@@ -1,4 +1,4 @@
-import type { CourseWork } from "src/types";
+import type { CourseWork, CourseWorkAssignment } from "src/types";
 import { Box, Heading, Text, Badge, Divider } from "@chakra-ui/react";
 import MaterialItem from "./MaterialItem";
 
@@ -12,6 +12,7 @@ const CourseWorkItem = (props: IProps) => {
   let { coursework, last, sub = false } = props;
 
   let { id, title, description, materials, type, topic } = coursework;
+  let { maxPoints } = coursework as CourseWorkAssignment;
   let dividerColor = sub ? "gray" : "teal";
 
   return (
@@ -38,6 +39,12 @@ const CourseWorkItem = (props: IProps) => {
       {materials?.map((m, i) => (
         <MaterialItem key={`${id}--m${i}}`} material={m} />
       ))}
+      {maxPoints && (
+        <Box mt="2">
+          <b>Graded: </b>
+          {maxPoints}
+        </Box>
+      )}
       {!last && <Divider borderBottomColor={dividerColor} mt="4" />}
     </Box>
   );

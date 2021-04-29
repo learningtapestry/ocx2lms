@@ -1,7 +1,6 @@
 import type {
   Session,
   Course,
-  CourseWork,
   GenericObject,
   CourseWorkMaterial,
   CourseWorkAssignment,
@@ -11,20 +10,14 @@ import { google } from "googleapis";
 import { omit } from "lodash";
 import { getAccessToken } from "src/authUtils";
 
-let googleClassroom = async (session: Session) => {
+async function googleClassroom(session: Session) {
   let auth = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
   let accessToken = await getAccessToken(session.user);
   auth.setCredentials({ access_token: accessToken });
   return google.classroom({ version: "v1", auth });
-};
+}
 
-export let listCourses = async (session: Session): Promise<Course[]> => {
-  let classroom = await googleClassroom(session);
-  let resp = await classroom.courses.list();
-  return resp.data.courses || [];
-};
-
-export let createCourse = async (session: Session, course: Course): Promise<Course> => {
+export async function createCourse(session: Session, course: Course): Promise<Course> {
   let classroom = await googleClassroom(session);
   let resp: GenericObject;
   try {
@@ -34,41 +27,48 @@ export let createCourse = async (session: Session, course: Course): Promise<Cour
     resp = await classroom.courses.create({ requestBody: course });
     return resp.data;
   }
-};
+}
 
-export let createMaterial = async (
+export async function createMaterial(
   session: Session,
   courseId: string,
   coursework: CourseWorkMaterial
-): Promise<CourseWorkMaterial> => {
+): Promise<CourseWorkMaterial> {
   let classroom = await googleClassroom(session);
   let resp = await classroom.courses.courseWorkMaterials.create({
     courseId: courseId,
-    requestBody: omit(coursework, "type", "topic")
+    requestBody: omit(coursework, "type", "topic", "ocxGdoc")
   });
   return resp.data;
-};
+}
 
-export let createAssignment = async (
+export async function createAssignment(
   session: Session,
   courseId: string,
-  coursework: CourseWorkAssignment
-): Promise<CourseWorkAssignment> => {
+  coursework: CourseWorkAssignment,
+  tries: number = 0
+): Promise<CourseWorkAssignment> {
   let classroom = await googleClassroom(session);
-  let resp = await classroom.courses.courseWork.create({
-    courseId: courseId,
-    requestBody: omit(coursework, "type", "topic")
-  });
-  return resp.data;
-};
+  try {
+    let resp = await classroom.courses.courseWork.create({
+      courseId: courseId,
+      requestBody: omit(coursework, "type", "topic", "timeRequired", "lessonActivity")
+    });
+    return resp.data;
+  } catch (err) {
+    if (err.response.code === 502 && tries < 3) {
+      return await createAssignment(session, courseId, coursework, tries + 1);
+    }
+    throw err;
+  }
+}
 
-export let createTopics = async (
+export async function createTopics(
   session: Session,
   courseId: string,
   topics: Topic[]
-): Promise<Topic[]> => {
+): Promise<Topic[]> {
   let classroom = await googleClassroom(session);
-
   let newTopics = await Promise.all(
     topics.map(async (topic) => {
       let resp = await classroom.courses.topics.create({
@@ -80,13 +80,4 @@ export let createTopics = async (
   );
 
   return newTopics;
-};
-
-export let listAssignments = async (session: Session, { courseId }): Promise<CourseWork[]> => {
-  let classroom = await googleClassroom(session);
-  let resp = await classroom.courses.courseWork.list({
-    courseId,
-    courseWorkStates: ["PUBLISHED", "DRAFT"]
-  });
-  return resp.data.courseWork || [];
-};
+}

@@ -3,7 +3,7 @@ import { getSession } from "next-auth/client";
 
 type RouteHandler = (req: NextApiRequest, res: NextApiResponse) => Promise<any>;
 
-let protectedRoute = (handler: RouteHandler) => {
+export default function protectedRoute(handler: RouteHandler) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     let session = await getSession({ req });
     if (session) {
@@ -12,6 +12,4 @@ let protectedRoute = (handler: RouteHandler) => {
       res.status(401).send("Not authorized");
     }
   };
-};
-
-export default protectedRoute;
+}

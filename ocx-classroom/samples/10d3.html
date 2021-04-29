@@ -1,187 +1,456 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <title>Unit 1</title>
-    <style type="text/css">
-      section {
-        border-bottom: solid 1px #bbb;
-        margin-bottom: 2em;
+    <script type="application/ld+json">
+      {
+        "@context": [
+          "http://schema.org/",
+          {
+            "oer": "http://oerschema.org/",
+            "ocx": "https://github.com/K12OCX/k12ocx-specs/",
+            "asn": "http://purl.org/ASN/schema/core/"
+          }
+        ],
+        "@type": "oer:Unit",
+        "@id": "http://localhost:8080/10d3.html",
+        "educationalAlignment": {
+          "@type": "AlignmentObject",
+          "alignmentType": "Educational level",
+          "educationalFramework": "US Grade Levels",
+          "targetName": "10",
+          "targetUrl": {
+            "@id": "http://purl.org/ASN/scheme/ASNEducationLevel/10"
+          }
+        },
+        "name": "THINGS FALL APART: Things Fall Apart",
+        "alternate Name": "Grade 10, Unit 3",
+        "courseCode": "10d3",
+        "hasPart": [
+          {
+            "@type": "oer:Activity",
+            "@id": "#Activity_1",
+            "name": "Unit Overview",
+            "educationalUse": "overview",
+            "ocx:assignmentModality": "annotation",
+            "ocx:collaborationType": "independent",
+            "ocx:material": [
+              {
+                "@type": "oer:SupportingMaterial",
+                "@id": "http://localhost:8080/10_d_3_unit_uo.html",
+                "educationalUse": "unit",
+                "name": "Things Fall Apart: Unit Overview",
+                "url": "http://localhost:8080/10_d_3_unit_uo.html"
+              }
+            ],
+            "ocx:points": 0,
+            "oer:gradingFormat": {
+              "@type": "oer:CompletionGradeFormat"
+            }
+          },
+          {
+            "@type": "oer:Activity",
+            "@id": "#Activity_2",
+            "name": "Unit Syllabus",
+            "educationalUse": "overview",
+            "ocx:assignmentModality": "annotation",
+            "ocx:collaborationType": "independent",
+            "ocx:material": [
+              {
+                "@type": "oer:SupportingMaterial",
+                "@id": "http://localhost:8080/10_d_3_unit_syllabus.html"
+              }
+            ],
+            "ocx:points": 0,
+            "oer:gradingFormat": {
+              "@type": "oer:CompletionGradeFormat"
+            }
+          },
+          {
+            "@type": "oer:Activity",
+            "@id": "#Activity_3",
+            "name": "Culminating Task",
+            "educationalUse": "overview",
+            "ocx:assignmentModality": "annotation",
+            "ocx:collaborationType": "independent",
+            "ocx:material": [
+              {
+                "@type": "oer:SupportingMaterial",
+                "@id": "http://localhost:8080/10_d_3_cx_viewonly.html",
+                "educationalUse": "assignment",
+                "name": "Things Fall Apart Culminating Task Checklist",
+                "url": "https://odell-uploads-staging.s3.amazonaws.com/release/materials/10d3_cx.pdf"
+              }
+            ],
+            "ocx:points": 0,
+            "oer:gradingFormat": {
+              "@type": "oer:CompletionGradeFormat"
+            }
+          },
+          {
+            "@type": "oer:Activity",
+            "@id": "#Activity_4",
+            "name": "Things Fall Apart\n by Chinua Achebe",
+            "educationalUse": "texts",
+            "ocx:assignmentModality": "annotation",
+            "ocx:collaborationType": "independent",
+            "ocx:material": [
+              {
+                "@type": "oer:SupportingMaterial",
+                "@id": "http://localhost:8080/10_d_3_txt_thingsnovel.html",
+                "educationalUse": "text",
+                "name": "Things Fall Apart\n by Chinua Achebe",
+                "url": "http://localhost:8080/10_d_3_txt_thingsnovel.html"
+              }
+            ],
+            "ocx:points": 0,
+            "oer:gradingFormat": {
+              "@type": "oer:CompletionGradeFormat"
+            }
+          },
+          {
+            "@type": "oer:Activity",
+            "@id": "#Activity_5",
+            "name": "“Igbo Culture and History” by Don C. Ohadike",
+            "educationalUse": "texts",
+            "ocx:assignmentModality": "annotation",
+            "ocx:collaborationType": "independent",
+            "ocx:material": [
+              {
+                "@type": "oer:SupportingMaterial",
+                "@id": "http://localhost:8080/10_d_3_txt_igboculture.html",
+                "educationalUse": "text",
+                "name": "“Igbo Culture and History” by Don C. Ohadike",
+                "url": "https://womrel.sitehost.iu.edu/REL%20300%20Spirit/REL%20300_Spirit/Igbo%20Culture%20and%20History.pdf"
+              }
+            ],
+            "ocx:points": 0,
+            "oer:gradingFormat": {
+              "@type": "oer:CompletionGradeFormat"
+            }
+          },
+          {
+            "@type": "oer:Activity",
+            "@id": "#Activity_6",
+            "name": "“The Second Coming” by William Butler Yeats",
+            "educationalUse": "texts",
+            "ocx:assignmentModality": "annotation",
+            "ocx:collaborationType": "independent",
+            "ocx:material": [
+              {
+                "@type": "oer:SupportingMaterial",
+                "@id": "http://localhost:8080/10_d_3_txt_second_coming.html",
+                "ocx:collaborationType": "individual-submission"
+              }
+            ],
+            "ocx:points": 0,
+            "oer:gradingFormat": {
+              "@type": "oer:CompletionGradeFormat"
+            }
+          },
+          {
+            "@type": "oer:Activity",
+            "@id": "#Activity_7",
+            "name": "Character Note-Taking Tool",
+            "educationalUse": "progressive",
+            "ocx:assignmentModality": "graphic-organizer",
+            "ocx:collaborationType": "independent",
+            "ocx:material": [
+              {
+                "@type": "oer:SupportingMaterial",
+                "@id": "http://localhost:8080/10_d_3_cnt.html",
+                "educationalUse": "progressive",
+                "ocx:collaborationType": "individual-submission",
+                "name": "Character Note-Taking Tool",
+                "url": "http://localhost:8080/10_d_3_cnt.html"
+              },
+              {
+                "@type": "oer:SupportingMaterial",
+                "@id": "http://localhost:8080/10_d_3_txt_thingsnovel.html",
+                "educationalUse": "text",
+                "name": "Things Fall Apart\n by Chinua Achebe",
+                "url": "http://localhost:8080/10_d_3_txt_thingsnovel.html"
+              }
+            ],
+            "ocx:points": 50,
+            "oer:gradingFormat": {
+              "@type": "oer:PointGradeFormat"
+            }
+          },
+          {
+            "@type": "oer:Activity",
+            "@id": "#Activity_8",
+            "name": "Vocabulary Journal",
+            "educationalUse": "progressive",
+            "ocx:assignmentModality": "graphic-organizer",
+            "ocx:collaborationType": "independent",
+            "ocx:material": [
+              {
+                "@type": "oer:SupportingMaterial",
+                "@id": "http://localhost:8080/10_d_3_vj.html",
+                "educationalUse": "progressive",
+                "ocx:collaborationType": "individual-submission",
+                "name": "Things Fall Apart Vocabulary Journal",
+                "url": "http://localhost:8080/10_d_3_vj.html"
+              }
+            ],
+            "ocx:points": 100,
+            "oer:gradingFormat": {
+              "@type": "oer:PointGradeFormat"
+            }
+          },
+          {
+            "@type": "oer:Activity",
+            "@id": "#Activity_9",
+            "name": "Culminating Task Progress Tracker",
+            "educationalUse": "progressive",
+            "ocx:assignmentModality": "graphic-organizer",
+            "ocx:collaborationType": "independent",
+            "ocx:material": [
+              {
+                "@type": "oer:SupportingMaterial",
+                "@id": "http://localhost:8080/10_d_3_cx.html",
+                "educationalUse": "progressive",
+                "ocx:collaborationType": "individual-submission",
+                "name": "Things Fall Apart Culminating Task Checklist",
+                "url": "http://localhost:8080/10_d_3_cx.html"
+              }
+            ],
+            "ocx:points": 100,
+            "oer:gradingFormat": {
+              "@type": "oer:PointGradeFormat"
+            }
+          },
+          {
+            "@type": "oer:Activity",
+            "@id": "#Activity_10",
+            "name": "Learning Log",
+            "educationalUse": "progressive",
+            "ocx:assignmentModality": "short-answer",
+            "ocx:collaborationType": "independent",
+            "ocx:material": [
+              {
+                "@type": "oer:SupportingMaterial",
+                "@id": "http://localhost:8080/10_d_3_ll.html",
+                "educationalUse": "progressive",
+                "ocx:collaborationType": "individual-submission",
+                "name": "Things Fall Apart Learning Log",
+                "url": "http://localhost:8080/10_d_3_ll.html"
+              }
+            ],
+            "ocx:points": 100,
+            "oer:gradingFormat": {
+              "@type": "oer:PointGradeFormat"
+            }
+          }
+        ]
       }
-    </style>
+    </script>
   </head>
   <body>
-    <header>
-      <nav></nav>
-    </header>
-    <main>
-      <script type="application/ld+json">
-        {
-          "@context": [
-            "http://schema.org/",
-            {
-              "oer": "http://oerschema.org/",
-              "ocx": "https://github.com/K12OCX/k12ocx-specs/",
-              "cc": "http://creativecommons.org/ns#"
-            }
-          ],
-          "@id": "http://localhost:8080/10d3#A",
-          "@type": "oer:Unit",
-          "name": "Things Fall Apart",
-          "alternateName": "Grade 10, Unit 3",
-          "url": "http://localhost:8080/unit-1",
-          "identifier": "10d3",
-          "courseCode": "10d3",
-          "dateCreated": "2021-02-28T17:26:37.919Z",
-          "dateModified": "2017-02-28T22:44:01.334Z",
-          "oer:forTopic": {
-            "@type": "oer:Topic",
-            "@id": "http://localhost:8080/ela",
-            "name": "ELA"
-          },
-          "ocx:material":[
-            {
-              "@type": "oer:SupportingMaterial",
-              "@id": "#10d3_TXT_Igboculture",
-              "name": "“Igbo Culture and History” by Don C. Ohadike",
-              "educationalUse": ["text"],
-              "link": "https://womrel.sitehost.iu.edu/REL%20300%20Spirit/REL%20300_Spirit/Igbo%20Culture%20and%20History.pdf",
-              "description": "This text will help you understand Igbo culture so that you will have the necessary background knowledge to understand the characters, events, and ideas of Things Fall Apart. "
-            },
-            {
-              "@type": "oer:SupportingMaterial",
-              "@id": "#10d3_TXT_Secondcoming",
-              "name": "\"The Second Coming\" by William Butler Yeats",
-              "identifier": "10d3_TXT_Secondcoming",
-              "educationalUse": ["text"],
-              "link": "https://www.poetryfoundation.org/poems/43290/the-second-coming"
-            }
-          ],
-          "hasPart": [
-            {
-              "@type": "oer:SupportingMaterial",
-              "@id": "#10d3_UNIT_UO",
-              "identifier": "10d3_UNIT_UO",
-              "educationalUse": ["overview"],
-              "name": "Things Fall Apart: Unit Overview",
-              "ocx:material": []
-            },
-            {
-              "@type": "oer:SupportingMaterial",
-              "@id": "#10D3_UNIT_Syllabus",
-              "identifier": "10D3_UNIT_Syllabus",
-              "educationalUse": ["overview"],
-              "name": "Things Fall Apart Unit Syllabus",
-              "link": "https://docs.google.com/presentation/d/1EFMkdHPYHDYJTcXR8O7dE-VDA9hZNut4iIaEjJxhzC0",
-              "ocx:material": []
-            },
-            {
-              "@type": "oer:SupportingMaterial",
-              "@id": "#10d3_UNIT_CT",
-              "identifier": "10d3_UNIT_CT",
-              "educationalUse": ["core", "overview"],
-              "ocx:material": [{
-                "url": "https://docs.google.com/document/d/1aA6ig_6fd1-eoY-QQTriv-mqje9OOgOyifdxi5eERVM/edit"
-              }]
-            },
-            {
-              "@type": "UnknowType",
-              "@id": "#unknown",
-              "identifier": "unknown",
-              "title": "This should be ignored!",
-              "ocx:material": [{
-                "url": "https://unknown.unknown"
-              }]
-            },
-            {
-              "@type": "oer:Activity",
-              "@id": "#10d3_CNT",
-              "identifier": "10d3_CNT",
-              "name": "Character Note-Taking Tool",
-              "educationalUse": ["progressive", "individual-submission"],
-              "assignmentOutcome": "Graded",
-              "totalPoints": "50",
-              "url": "https://docs.google.com/document/d/18YgS_7R94RpUwKzSm2pPFJAFszYkvyTGy56F5B1Nva8/edit"
-            },
-            {
-              "@type": "oer:Activity",
-              "@id": "#10d3_LL",
-              "identifier": "10d3_LL",
-              "name": "Things Fall Apart Learning Log",
-              "description": "Use this learning log to track your learning across the unit.",
-              "educationalUse": ["progressive", "individual-submission"],
-              "url": "https://docs.google.com/document/d/1hwRvSogfp9qrL9buol1dTfEApEu6CXhAoJlsjprRG4E/edit"
-            },
-            {
-              "@type": "oer:Activity",
-              "@id": "#10d3_VJ",
-              "identifier": "10d3_VJ",
-              "name": "Things Fall Apart Vocabulary Journal",
-              "educationalUse": ["progressive", "individual-submission"],
-              "url": "https://docs.google.com/document/d/1QRi092or-XJ9UT_tbUK9ICa54aIsi1ztCsiI0u1uNEU/edit"
-            },
-            {
-              "@type": "oer:Activity",
-              "@id": "#10d3_CX",
-              "identifier": "10d3_CX",
-              "name": "Culminating Task Progress Tracker",
-              "educationalUse": ["progressive", "individual-submission"],
-              "url": "https://docs.google.com/document/d/10ku84aNopwZvHvcuUvVzrpHgx83fcGoDfm0m84CFXxU/edit"
-            },
-            {
-              "@type": "oer:Lesson",
-              "@id": "http://localhost:8080/10d3-l1#A"
-            }
-          ]
-        }
-      </script>
-      <!-- material => link | url -->
-      <!-- activity => assignmentGroup, assignmentOutcome, totalPoints -->
-
-      <header>
-        <h1>Things Fall Apart</h1>
-      </header>
-      <section id="10d3_UNIT_UO">
-        <h2>What does it mean for things to fall apart?</h2>
-        <p>
-          In the novel Things Fall Apart, Pulitzer Prize-winner Chinua Achebe crafts the story of his central character, Okonkwo, an Igbo tribesman that lives during the European colonization of Africa. Through analyzing Achebe’s text, we will explore the following question: What does it mean for things to fall apart? We will examine the internal and external factors that influence and define who we become and how we make choices in our lives through the lens of the characters in Achebe’s novel. Our work will culminate with an expository essay that analyzes these forces in Okonkwo’s life.
-        </p>
-      </section>
-      <section id="10d3_UNIT_CT">
-        <h2>Culminating Task</h2>
-        <article>
-          <p>Central Question: What does it mean for things to fall apart?</p>
-          <p>
-            Culminating Task Prompt: Write a character analysis of Okonkwo. In your analysis, consider how internal and external factors influence his relationships and contribute to his fate at the end of the novel. In your response, be sure to do the following:
-            <ul>
-              <li>1. Include a clearly stated thesis that conveys your stance.</li>
-              <li>2. Summarize Okonkwo’s story, experiences, and motivations.</li>
-              <li>3. Develop your thesis through a sequence of claims related to internal factors (e.g., beliefs, fears, traits) and external factors (e.g., plot events and developments, setting).</li>
-              <li>4. Use specific examples from the text.</li>
-              <li>5. Clearly communicate your analysis through effective word choices, sentence and paragraph development, and transitions among ideas.</li>
-              <li>6. Use the conventions of usage, mechanics, and punctuation.</li>
-            </ul>
-          </p>
-        </article>
-      </section>
-      <section id="10d3_CNT">
-        <article>
-          <p>
-            Throughout the unit, take notes on the following characters on the attached character note-taking tool.
-          </p>
-          <ul>
-            <li>1. Okonkwo</li>
-            <li>2. Unoka</li>
-            <li>3. Okoye</li>
-            <li>4. Ikemefuna</li>
-            <li>5. X</li>
-            <li>6. XX</li>
-          </ul>
-        </article>
-      </section>
-      <section id="10d3_VJ">
-        <article>
-          Throughout the unit, document words or concepts that you do not know or that you think are important to learn and practice. You might use context clues from the text you are reading to assist in determining what the words mean. You might also consult a dictionary or other reference material. Many words or concepts have more than one meaning, so be sure to think about the context in which they are used to determine the most accurate meaning. Some words may be provided by your teacher, but you should also note any other words you find interesting.
-        </article>
-      </section>
-    </main>
+    <section id="Activity_1">
+      <p>
+        In the novel Things Fall Apart, Pulitzer Prize-winner Chinua Achebe
+        crafts the story of his central character, Okonkwo, an Igbo tribesman
+        that lives during the European colonization of Africa. Through analyzing
+        Achebe’s text, we will explore the following question: What does it mean
+        for things to fall apart? We will examine the internal and external
+        factors that influence and define who we become and how we make choices
+        in our lives through the lens of the characters in Achebe’s novel. Our
+        work will culminate with an expository essay that analyzes these forces
+        in Okonkwo’s life.
+      </p>
+    </section>
+    <section id="Activity_Teacher_1"></section>
+    <section id="Activity_2">
+      <p>
+        Refer to this document as needed to understand the goals and content of
+        the unit.
+      </p>
+    </section>
+    <section id="Activity_Teacher_2"></section>
+    <section id="Activity_3">
+      <p>Central Question: What does it mean for things to fall apart?</p>
+      <p>
+        Culminating Task Prompt: Write a character analysis of Okonkwo. In your
+        analysis, consider how internal and external factors influence his
+        relationships and contribute to his fate at the end of the novel. In
+        your response, be sure to do the following:
+      </p>
+      <ol>
+        <li>Include a clearly stated thesis that conveys your stance.</li>
+      </ol>
+      <ol>
+        <li>Summarize Okonkwo’s story, experiences, and motivations.</li>
+      </ol>
+      <ol>
+        <li>
+          Develop your thesis through a sequence of claims related to internal
+          factors (e.g., beliefs, fears, traits) and external factors (e.g.,
+          plot events and developments, setting).
+        </li>
+      </ol>
+      <ol>
+        <li>Use specific examples from the text.</li>
+      </ol>
+      <ol>
+        <li>
+          Clearly communicate your analysis through effective word choices,
+          sentence and paragraph development, and transitions among ideas.
+        </li>
+      </ol>
+      <ol>
+        <li>Use the conventions of usage, mechanics, and punctuation.</li>
+      </ol>
+    </section>
+    <section id="Activity_Teacher_3"></section>
+    <section id="Activity_4">
+      <p>
+        This is the anchor text of the unit. You will have a hard copy of this
+        text available to you..
+      </p>
+    </section>
+    <section id="Activity_Teacher_4"></section>
+    <section id="Activity_5">
+      <p>
+        This text will help you understand Igbo culture so that you will have
+        the necessary background knowledge to understand the characters, events,
+        and ideas of <em>Things Fall Apart</em>.
+      </p>
+    </section>
+    <section id="Activity_Teacher_5"></section>
+    <section id="Activity_6">
+      <p>
+        This poem is the source for the title of the novel
+        <em>Things Fall Apart</em>. You will read this text in the unit to
+        understand why it might be used as a source for the novel’s title.
+      </p>
+    </section>
+    <section id="Activity_Teacher_6"></section>
+    <section id="Activity_7">
+      <p>
+        <span
+          style="
+            font-size: 0.91em;
+            color: rgb(36, 51, 64);
+            background-color: rgb(255, 255, 255);
+          "
+          >Throughout the unit, take notes on the following characters on the
+          attached character note-taking tool.</span
+        >
+      </p>
+      <p>
+        <span
+          style="
+            font-size: 0.91em;
+            color: rgb(36, 51, 64);
+            background-color: rgb(255, 255, 255);
+          "
+          >1. Okonkwo</span
+        >
+      </p>
+      <p>
+        <span
+          style="
+            font-size: 0.91em;
+            color: rgb(36, 51, 64);
+            background-color: rgb(255, 255, 255);
+          "
+          >2. Unoka</span
+        >
+      </p>
+      <p>
+        <span
+          style="
+            font-size: 0.91em;
+            color: rgb(36, 51, 64);
+            background-color: rgb(255, 255, 255);
+          "
+          >3. Okoye</span
+        >
+      </p>
+      <p>
+        <span
+          style="
+            font-size: 0.91em;
+            color: rgb(36, 51, 64);
+            background-color: rgb(255, 255, 255);
+          "
+          >4. Ikemefuna</span
+        >
+      </p>
+      <p>
+        <span
+          style="
+            font-size: 0.91em;
+            color: rgb(36, 51, 64);
+            background-color: rgb(255, 255, 255);
+          "
+          >5. X</span
+        >
+      </p>
+      <p>
+        <span
+          style="
+            font-size: 0.91em;
+            color: rgb(36, 51, 64);
+            background-color: rgb(255, 255, 255);
+          "
+          >6. XX</span
+        >
+      </p>
+    </section>
+    <section id="Activity_Teacher_7"></section>
+    <section id="Activity_8">
+      <p>
+        <span
+          style="
+            font-size: 0.91em;
+            color: rgb(36, 51, 64);
+            background-color: rgb(255, 255, 255);
+          "
+          >Throughout the unit, document words or concepts that you do not know
+          or that you think are important to learn and practice. You might use
+          context clues from the text you are reading to assist in determining
+          what the words mean. You might also consult a dictionary or other
+          reference material. Many words or concepts have more than one meaning,
+          so be sure to think about the context in which they are used to
+          determine the most accurate meaning. Some words may be provided by
+          your teacher, but you should also note any other words you find
+          interesting.</span
+        >
+      </p>
+    </section>
+    <section id="Activity_Teacher_8"></section>
+    <section id="Activity_9">
+      <p>
+        <span
+          style="
+            font-size: 0.91em;
+            color: rgb(36, 51, 64);
+            background-color: rgb(255, 255, 255);
+          "
+          >Throughout the unit, document words or concepts that you do not know
+          or that you think are important to learn and practice. You might use
+          context clues from the text you are reading to assist in determining
+          what the words mean. You might also consult a dictionary or other
+          reference material. Many words or concepts have more than one meaning,
+          so be sure to think about the context in which they are used to
+          determine the most accurate meaning. Some words may be provided by
+          your teacher, but you should also note any other words you find
+          interesting.</span
+        >
+      </p>
+    </section>
+    <section id="Activity_Teacher_9"></section>
+    <section id="Activity_10">
+      <p>
+        <span style="font-size: 0.91em; background-color: rgb(255, 255, 255)"
+          >Use this to take notes throughout the unit.</span
+        >
+      </p>
+    </section>
+    <section id="Activity_Teacher_10"></section>
   </body>
 </html>
+
+

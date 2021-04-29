@@ -35,7 +35,6 @@ const DataPreview = (props: IProps) => {
       if (resp.error) {
         throw { message: resp.error };
       }
-      console.log(resp);
       setCourseUrl(resp.alternateLink);
       toast({
         title: "Sync successfull.",

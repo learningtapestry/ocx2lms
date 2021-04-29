@@ -33,4 +33,5 @@ yarn-error.log*
 # vercel
 .vercel
 
+data/dev.db
 data/dumps/

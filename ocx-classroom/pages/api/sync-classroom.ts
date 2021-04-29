@@ -4,7 +4,8 @@ import { getSession } from "next-auth/client";
 import { createAssignment, createCourse, createMaterial, createTopics } from "src/classroom";
 import { logError } from "src/utils";
 import protectedRoute from "src/protectedRoute";
-import { ClassroomData } from "src/types";
+import { ClassroomData, CourseWork, Material, Session } from "src/types";
+import { createFolder, htmlToGoogleDoc } from "src/drive";
 
 export default protectedRoute(async (req: NextApiRequest, res: NextApiResponse) => {
   let session = await getSession({ req });
@@ -19,7 +20,14 @@ export default protectedRoute(async (req: NextApiRequest, res: NextApiResponse) 
     let created = await createCourse(session, course);
     let courseId = created?.id || data.course.id;
     let topics = await createTopics(session, courseId, data.topics);
-    data.courseworks.forEach(async (cw) => {
+
+    let folderId = await createFolder(session, `Classroom-${course.name}`);
+    let courseworks = await Promise.all(
+      data.courseworks.map(async (c) => await courseworkWithDocs(session, c, folderId))
+    );
+
+    for (let i = 0; i < courseworks.length; i++) {
+      let cw = courseworks[i];
       let topic = topics.find((t) => cw.topic && t.name === cw.topic);
       if (topic) {
         cw.topicId = topic.topicId;
@@ -31,10 +39,10 @@ export default protectedRoute(async (req: NextApiRequest, res: NextApiResponse) 
           await createAssignment(session, courseId, cw);
         }
       } catch (err) {
-        console.log("Error:", [cw.type, cw.id, cw.title].join(" :: "));
-        logError(err);
+        console.log("Err sync:", [cw.type, cw.id, cw.title].join(" :: "));
+        console.log(err);
       }
-    });
+    }
     res.status(200).json(created);
   } catch (err) {
     logError(err);
@@ -42,3 +50,27 @@ export default protectedRoute(async (req: NextApiRequest, res: NextApiResponse) 
     res.status(422).json({ error: msg || "Failed to sync data" });
   }
 });
+
+async function courseworkWithDocs(
+  session: Session,
+  cw: CourseWork,
+  folderId: string
+): Promise<CourseWork> {
+  let materials: Material[] = [];
+  for (let i = 0; i < cw.materials.length; i++) {
+    let material: Material = cw.materials[i];
+    if (material.ocxGdoc) {
+      let { content, shareMode } = material.ocxGdoc;
+      try {
+        let id = await htmlToGoogleDoc(session, folderId, cw.title, content);
+        materials.push({ driveFile: { driveFile: { id }, shareMode } });
+      } catch (err) {
+        console.log("Error gen doc:", [cw.type, cw.id, cw.title].join(" :: "));
+        logError(err);
+      }
+    } else {
+      materials.push(material);
+    }
+  }
+  return { ...cw, materials };
+}
