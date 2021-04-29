@@ -15,15 +15,29 @@ const oerTypeRE = /oer:(.*)/;
 const gdocIdRE = /docs.google.com\/\w+\/d\/([-\w]+)\/?.*/;
 const youtubeIdRE = /youtube.com\/watch\?v=([-\w]+)&?.*/;
 
+const DEFAULTS = {
+  weeklyPace: 5 * 45,
+  defaultTime: 15
+};
+
+interface Opts {
+  weeklyPace: number;
+  defaultTime: number;
+}
 export class OcxToClassroomParser {
   ocx: GenericObject;
   doc: HTMLDocument;
 
   private url: string;
   private isLesson: boolean;
+  private level: number;
+  private options: Opts;
 
-  constructor(url: string) {
-    this.url = url.indexOf("http://") === -1 ? "http://" + url : url;
+  constructor(url: string, options: Opts = DEFAULTS, level: number = 0) {
+    this.url = url.indexOf("http") !== 0 ? "http://" + url : url;
+    this.level = level;
+    this.options = options;
+    console.log(this.options);
   }
 
   async fetchAndParse(): Promise<ClassroomData> {
@@ -38,9 +52,9 @@ export class OcxToClassroomParser {
     let html = await response.text();
 
     this.doc = parser.parseFromString(html, "text/html");
-    let content = this.doc.querySelector(jsonldSel).innerHTML;
+    let content = this.doc.querySelector(jsonldSel)?.innerHTML;
     try {
-      this.ocx = JSON.parse(content);
+      this.ocx = content ? JSON.parse(content) : {};
     } catch (err) {
       console.log(err);
       this.ocx = {};
@@ -48,15 +62,23 @@ export class OcxToClassroomParser {
   }
 
   async parse(): Promise<ClassroomData> {
+    if (_.isEmpty(this.ocx)) {
+      return { course: null, courseworks: [], topics: [] };
+    }
+
     let course = this.buildCourse();
     this.isLesson = course.type === "Lesson";
 
-    let materials = materialsList(this.ocx).map((m) => {
-      return this.buildCourseWorkMaterial(m);
-    });
-    let assignments = assignmentsList(this.ocx).map((a) => {
-      return this.buildCourseWorkAssignment(a);
-    });
+    let materials = await Promise.all(
+      materialsList(this.ocx).map(async (m) => {
+        return await this.buildCourseWorkMaterial(m);
+      })
+    );
+    let assignments = await Promise.all(
+      assignmentsList(this.ocx).map(async (a) => {
+        return await this.buildCourseWorkAssignment(a);
+      })
+    );
 
     let courseworks = [...materials, ...assignments];
     let topics = _.chain(courseworks)
@@ -65,14 +87,19 @@ export class OcxToClassroomParser {
       .uniqBy("name")
       .value();
 
+    // recur on subresources
     let subResources = await Promise.all(
       subResourcesList(this.ocx).map(async (url) => {
-        let parser = new OcxToClassroomParser(url);
+        if (this.level >= 2) return null;
+
+        let parser = new OcxToClassroomParser(url, this.options, this.level + 1);
         let data = await parser.fetchAndParse();
         return data;
       })
     );
     subResources.forEach((d) => {
+      if (!d) return;
+
       if (d.courseworks?.length) {
         courseworks.push(...d.courseworks);
       }
@@ -80,6 +107,21 @@ export class OcxToClassroomParser {
         topics.push(...d.topics);
       }
     });
+
+    // add Week topics to lessons
+    if (this.level === 0) {
+      let totalTime = 0;
+      courseworks.forEach((cw) => {
+        if ((cw as CourseWorkAssignment).lessonActivity && !cw.topic) {
+          totalTime += (cw as CourseWorkAssignment).timeRequired;
+          let weekNumber = Math.floor(totalTime / this.options.weeklyPace) + 1;
+          let name = `Week ${weekNumber}`;
+          cw.topic = name;
+          if (!topics.find((t) => t.name === name)) topics.push({ name });
+        }
+      });
+    }
+
     return { course, courseworks, topics };
   }
 
@@ -106,7 +148,7 @@ export class OcxToClassroomParser {
     return course;
   }
 
-  private buildCourseWorkMaterial(ocx: GenericObject): CourseWorkMaterial {
+  private async buildCourseWorkMaterial(ocx: GenericObject): Promise<CourseWorkMaterial> {
     let cwMaterial: CourseWorkMaterial = {
       type: "Material",
       id: ocxIdentifier(ocx),
@@ -132,27 +174,29 @@ export class OcxToClassroomParser {
     }
     cwMaterial.description = _.trim(desc);
 
-    let material = this.buildMaterial(ocx);
+    let material = await this.buildMaterial(ocx);
     if (material) {
       cwMaterial.materials.push(material);
     }
 
-    materialsList(ocx).forEach((m) => {
-      let material = this.buildMaterial(m);
-      if (material) {
-        cwMaterial.materials.push(material);
-      }
-    });
+    await Promise.all(
+      materialsList(ocx).map(async (m) => {
+        let material = await this.buildMaterial(m);
+        if (material) {
+          cwMaterial.materials.push(material);
+        }
+      })
+    );
 
     cwMaterial.topic = this.getTopicName(ocx);
     return cwMaterial;
   }
 
-  private buildCourseWorkAssignment(ocx: GenericObject): CourseWorkAssignment {
+  private async buildCourseWorkAssignment(ocx: GenericObject): Promise<CourseWorkAssignment> {
     let cwAssignment: CourseWorkAssignment = {
       type: "Assignment",
       id: ocxIdentifier(ocx),
-      workType: "ASSIGNMENT", // or SHORT_ANSWER_QUESTION | MULTIPLE_CHOICE_QUESTION
+      workType: "ASSIGNMENT",
       state: "DRAFT",
       materials: []
     };
@@ -176,23 +220,33 @@ export class OcxToClassroomParser {
     }
     cwAssignment.description = _.trim(desc);
 
-    let material = this.buildMaterial(ocx);
+    let material = await this.buildMaterial(ocx);
     if (material) {
       cwAssignment.materials.push(material);
     }
 
-    materialsList(ocx).forEach((m) => {
-      let material = this.buildMaterial(m);
-      if (material) {
-        cwAssignment.materials.push(material);
-      }
-    });
+    await Promise.all(
+      materialsList(ocx).map(async (m) => {
+        let material = await this.buildMaterial(m);
+        if (material) {
+          cwAssignment.materials.push(material);
+        }
+      })
+    );
 
-    if (ocx.totalPoints) {
-      cwAssignment.maxPoints = parseInt(ocx.totalPoints, 10);
-    } else if (_.lowerCase(ocx.assignmentOutcome) === "graded") {
-      cwAssignment.maxPoints = 100;
+    if (ocx["ocx:points"]) {
+      cwAssignment.maxPoints = parseInt(ocx["ocx:points"], 10);
+    } else {
+      let gradingFormat = _.lowerCase(ocx["oer:gradingFormat"]?.["@type"]);
+      if (gradingFormat === "oer:CompletionGradeFormat") {
+        cwAssignment.maxPoints = 0;
+      } else if (gradingFormat === "oer:PointGradeFormat") {
+        cwAssignment.maxPoints = 100;
+      }
     }
+    cwAssignment.timeRequired =
+      parseInt(ocx.timeRequired?.match(/(\d+)/)?.[1]) || this.options.defaultTime;
+    cwAssignment.lessonActivity = this.isLesson;
 
     // TODO: dueDate and dueTime
 
@@ -201,11 +255,16 @@ export class OcxToClassroomParser {
     return cwAssignment;
   }
 
-  private buildMaterial(m: GenericObject): Material | null {
+  private async buildMaterial(m: GenericObject): Promise<Material | null> {
+    if (_.includes(m["ocx:collaborationType"], "submission")) {
+      return await this.buildOcxGdoc(m);
+    }
+
     let url = m.link;
-    if ((!url || _.isEmpty(url)) && !_.includes(m.id, m.url)) {
+    if ((!url || _.isEmpty(url)) && !_.includes(m["@id"], m.url)) {
       url = m.url;
     }
+
     if (!url || _.isEmpty(url)) return null;
 
     if (_.includes(url, "youtube")) {
@@ -219,6 +278,23 @@ export class OcxToClassroomParser {
     }
   }
 
+  private async buildOcxGdoc(m: GenericObject): Promise<GenericObject> {
+    if (m["@id"]?.startsWith("http")) {
+      let parser = new OcxToClassroomParser(m["@id"], this.options, this.level + 1);
+      await parser.fetchOcx();
+      return parser.ocx ? await parser.buildOcxGdoc(parser.ocx) : null;
+    } else if (m["@id"]?.startsWith("#")) {
+      let shareMode = gdocShareMode(m);
+      let node =
+        this.doc.getElementById(ocxIdentifier(m)) ||
+        this.doc.getElementById(m["@id"].replace("#Material_", ""));
+      if (node) {
+        return { ocxGdoc: { content: node?.innerHTML, id: null, shareMode } };
+      }
+    }
+    return null;
+  }
+
   private buildTopic(coursework: CourseWork): Topic | null {
     if (coursework.topic?.length > 0) {
       return { name: coursework.topic };
@@ -227,11 +303,6 @@ export class OcxToClassroomParser {
   }
 
   private getTopicName(ocx: GenericObject): string | null {
-    if (this.isLesson) {
-      // TODO: calc Week
-      return "Week 1";
-    }
-
     if (_.includes(ocx.educationalUse, "progressive")) {
       return "Progressive Assignments";
     } else if (_.includes(ocx.educationalUse, "overview")) {
@@ -265,13 +336,15 @@ function assignmentsList(ocx: GenericObject): GenericObject[] {
 }
 
 function subResourcesList(ocx: GenericObject): string[] {
-  const keys = ["name", "hasPart", "ocx:material", "educationalUse"];
-  return (ocx.hasPart || [])
+  const keys = ["name", "hasPart", "ocx:material"];
+  return _.chain(ocx.hasPart || [])
     .filter((o) => {
       let anyData = keys.some((k) => o[k]);
       return o["@id"]?.startsWith("http") && !anyData;
     })
-    .map((o) => o["@id"]);
+    .map((o) => o["@id"])
+    .uniq()
+    .value();
 }
 
 function youtubeMaterial(url: string): Material {
@@ -279,16 +352,19 @@ function youtubeMaterial(url: string): Material {
   return { youtubeVideo: { id: youtubeId } };
 }
 
+function gdocShareMode(m: GenericObject): string {
+  if (_.includes(m["ocx:collaborationType"], "individual-submission")) {
+    return "STUDENT_COPY";
+  } else if (_.includes(m["ocx:collaborationType"], "shared-submission")) {
+    return "EDIT";
+  } else {
+    return "VIEW";
+  }
+}
+
 function gdocMaterial(url: string, m: GenericObject): Material {
   let docId = gdocIdRE.exec(url)?.[1];
-  let shareMode: string;
-  if (_.includes(m.educationalUse, "individual-submission")) {
-    shareMode = "STUDENT_COPY";
-  } else if (_.includes(m.educationalUse, "shared-submission")) {
-    shareMode = "EDIT";
-  } else {
-    shareMode = "VIEW";
-  }
+  let shareMode = gdocShareMode(m);
   return { driveFile: { driveFile: { id: docId }, shareMode } };
 }
 

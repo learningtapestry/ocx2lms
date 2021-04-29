@@ -25,6 +25,8 @@ interface Course extends classroom_v1.Schema$Course {
 interface CourseWorkAssignment extends classroom_v1.Schema$CourseWork {
   type?: "Assignment";
   topic?: string;
+  timeRequired?: number;
+  lessonActivity?: boolean;
   // courseId: string
   // id: string
   // title: string
@@ -57,7 +59,7 @@ interface CourseWorkMaterial extends classroom_v1.Schema$CourseWorkMaterial {
   // id: string
   // title: string
   // description: string
-  // materials: classroom_v1.Schema$Material[]
+  // materials: Material[]
   // state: DRAFT | PUBLISHED | DELETED
   // alternateLink: string
   // creationTime: string
@@ -71,7 +73,13 @@ interface CourseWorkMaterial extends classroom_v1.Schema$CourseWorkMaterial {
 
 type CourseWork = CourseWorkAssignment | CourseWorkMaterial;
 
-interface Material extends classroom_v1.Schema$Material {}
+interface Material extends classroom_v1.Schema$Material {
+  ocxGdoc?: {
+    content: string;
+    id?: string;
+    shareMode: string;
+  };
+}
 
 interface ClassroomData {
   course: Course;

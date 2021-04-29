@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { PrismaClient } from "@prisma/client";
 
-export default () => {
+export default function getPrismaClient() {
   let prisma;
   if (process.env.NODE_ENV === "production") {
     prisma = new PrismaClient();
@@ -12,4 +12,4 @@ export default () => {
     prisma = global.prisma;
   }
   return prisma;
-};
+}
