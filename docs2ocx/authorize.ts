@@ -12,8 +12,10 @@ interface OAuth2Credentials {
   };
 }
 
-// If modifying these scopes, delete token.json.
-const SCOPES = ["https://www.googleapis.com/auth/documents.readonly"];
+const SCOPES = [
+  "https://www.googleapis.com/auth/documents.readonly",
+  "https://www.googleapis.com/auth/spreadsheets.readonly",
+];
 
 const readToken = (tokenFilePath: string) => {
   const token = fs.readFileSync(tokenFilePath, "utf-8");
