@@ -31,10 +31,8 @@ export default async function readRubricSheet(spreadsheetId: string) {
         )
       ) {
         if (currentCriterion) {
-          currentCriterion.levels = currentCriterion.levels.reverse();
           rubric.criterions.push(currentCriterion);
         }
-
         state = "criterionTitle";
         currentCriterion = { title: col0, levels: [] };
       } else if (state == "criterionTitle") {
@@ -80,6 +78,9 @@ export default async function readRubricSheet(spreadsheetId: string) {
         );
       }
     }
+  }
+  if (currentCriterion) {
+    rubric.criterions.push(currentCriterion);
   }
 
   return rubric;
