@@ -15,7 +15,8 @@ const SCOPES = [
   "https://www.googleapis.com/auth/classroom.courseworkmaterials",
   "https://www.googleapis.com/auth/classroom.topics",
   "https://www.googleapis.com/auth/documents",
-  "https://www.googleapis.com/auth/drive.file"
+  "https://www.googleapis.com/auth/drive.file",
+  "https://www.googleapis.com/auth/spreadsheets"
 ];
 
 const AUTHORIZATION_URL =
