@@ -3,7 +3,9 @@ import {
   OdellDocument,
   MaterialDocument,
   MaterialReference,
+  RubricReference,
 } from "./odellTypes";
+import { dasherize } from "./util";
 
 export interface PathParams {
   metadata: {
@@ -43,6 +45,20 @@ export function materialPath(
   extension: string = ".html"
 ) {
   let path = `materials/${snakeCase(material.id.toLocaleLowerCase())}`;
+  if (extension) {
+    path += extension;
+  }
+  return prefix ? `${prefix}/${path}` : path;
+}
+
+export function rubricPath(
+  document: OdellDocument,
+  rubric: RubricReference,
+  prefix: string = null,
+  extension: string = ".html"
+) {
+  const rubricId = dasherize(rubric.rubric_id);
+  let path = `units/${document.metadata.grade}/${document.metadata.guidebook_type}_rubric_${rubricId}`;
   if (extension) {
     path += extension;
   }

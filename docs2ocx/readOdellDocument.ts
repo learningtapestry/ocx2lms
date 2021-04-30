@@ -31,11 +31,7 @@ export async function readDocument(documentId) {
 
   if (lesson.metadata.rubrics) {
     for (const rubric of lesson.metadata.rubrics.rubrics) {
-      const spreadsheetId = rubric.url
-        .trim()
-        .replace("https://docs.google.com/spreadsheets/d/", "")
-        .split("/")[0];
-      rubric.resolvedRubric = await readRubricSheet(spreadsheetId);
+      rubric.resolvedRubric = await readRubricSheet(rubric.spreadsheetId);
     }
   }
 

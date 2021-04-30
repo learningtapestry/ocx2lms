@@ -49,7 +49,7 @@ export async function writeOcxDocument(
     type == "material" ? "Lcms::Engine::Material" : "Lcms::Engine::Document";
   const client = await getClient();
   const targetId = await findOdellIdByDocumentId(documentId, type);
-  const targetType = typeModel;
+  const targetType = targetId ? typeModel : null;
   const query = `
     INSERT INTO
       ocx_documents (path, document_type, target_id, target_type, document, html, created_at, updated_at)

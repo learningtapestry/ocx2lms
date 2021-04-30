@@ -1,4 +1,8 @@
-import { OdellDocument, MaterialReference } from "./odellTypes";
+import {
+  OdellDocument,
+  MaterialReference,
+  RubricReference,
+} from "./odellTypes";
 import { snakeCase } from "lodash";
 import { format } from "prettier";
 
@@ -26,6 +30,23 @@ export function materialToHtml(
       <section id="Material_${snakeCase(material.id.toLocaleLowerCase())}">
         ${material.resolvedMaterial?.content?.content}
       </section>
+    </body>
+  </html>`);
+}
+
+export function rubricToHtml(
+  rubric: RubricReference,
+  jsonLd: Record<string, any>
+) {
+  return prettify(`
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <script type="application/ld+json">
+        ${JSON.stringify(jsonLd, null, 2)}
+      </script>
+    </head>
+    <body>
     </body>
   </html>`);
 }

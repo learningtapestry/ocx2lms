@@ -1,5 +1,5 @@
 import { snakeCase, sortBy } from "lodash";
-import { lessonPath, materialPath, unitPath } from "./paths";
+import { lessonPath, materialPath, rubricPath, unitPath } from "./paths";
 import {
   Activity,
   OdellDocument,
@@ -149,7 +149,7 @@ const buildActivity = (
       );
       activityJson["oer:gradingFormat"] = {
         "@type": ["asn:Rubric", "Thing"],
-        "@id": url,
+        "@id": activity.metadata.rubric_id,
         url: url,
       };
     }
@@ -201,9 +201,12 @@ export function materialToOcx(
   return materialJson;
 }
 
-const buildRubric = (rubricRef: RubricReference) => {
+export const rubricToOcx = (
+  rubricRef: RubricReference,
+  includeContext = true
+) => {
   return buildJsonLd(
-    "asn:Rubric",
+    ["asn:Rubric", "Thing"],
     {
       "@id": rubricRef.rubric_id,
       name: rubricRef.resolvedRubric.title,
@@ -234,7 +237,7 @@ const buildRubric = (rubricRef: RubricReference) => {
         }
       ),
     },
-    false
+    includeContext
   );
 };
 
@@ -306,9 +309,11 @@ const buildUnit = async (document: OdellDocument) => {
   json.hasPart = activities.concat(lessonUrls);
 
   if (document.metadata.rubrics) {
-    json["ocx:rubric"] = document.metadata.rubrics.rubrics.map((r) =>
-      buildRubric(r)
-    );
+    json["ocx:rubric"] = document.metadata.rubrics.rubrics.map((r) => ({
+      "@type": ["asn:Rubric", "Thing"],
+      "@id": r.rubric_id,
+      url: rubricPath(document, r, config.baseOcxPath),
+    }));
   }
 
   return json;

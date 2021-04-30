@@ -1,9 +1,9 @@
 import { DocumentTypes } from "./odellTypes";
 import { flatten } from "lodash";
 import { findDocumentIds, writeOcxDocument } from "./lcmsQueries";
-import { documentToHtml, materialToHtml } from "./odellToHtml";
-import { documentToOcx, materialToOcx } from "./odellToOcx";
-import { lessonPath, materialPath, unitPath } from "./paths";
+import { documentToHtml, materialToHtml, rubricToHtml } from "./odellToHtml";
+import { documentToOcx, materialToOcx, rubricToOcx } from "./odellToOcx";
+import { lessonPath, materialPath, rubricPath, unitPath } from "./paths";
 import { readDocument, readMaterialDocument } from "./readOdellDocument";
 
 export async function generateDocument(documentId: string) {
@@ -28,6 +28,17 @@ export async function generateDocument(documentId: string) {
       materialPath(materialReference, null, null),
       ocx,
       materialToHtml(materialReference, ocx)
+    );
+  }
+
+  for (const rubric of document.metadata.rubrics?.rubrics || []) {
+    const ocx = rubricToOcx(rubric);
+    await writeOcxDocument(
+      rubric.url,
+      "rubric",
+      rubricPath(document, rubric, null, null),
+      ocx,
+      rubricToHtml(rubric, ocx)
     );
   }
 

@@ -111,9 +111,15 @@ function parseRubricReferences(
       continue;
     }
 
+    const spreadsheetId = url
+      .trim()
+      .replace("https://docs.google.com/spreadsheets/d/", "")
+      .split("/")[0];
+
     rubrics.push({
       rubric_id: rubricId,
       url,
+      spreadsheetId,
     });
   }
 

@@ -44,7 +44,7 @@ export const MaterialMetadataKeys = {
   "guidebook-type": "guidebook_type",
 };
 
-export type DocumentTypes = "material" | "lesson" | "unit";
+export type DocumentTypes = "material" | "lesson" | "unit" | "rubric";
 
 export type AssignmentOutcomeTypes =
   | "completed"
@@ -103,6 +103,7 @@ export interface MaterialReference {
 export interface RubricReference {
   rubric_id: string;
   url: string;
+  spreadsheetId: string;
   resolvedRubric?: GCRubricSheet;
 }
 
