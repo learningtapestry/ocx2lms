@@ -17,6 +17,8 @@ import {
   StudentContent,
   TeacherContent,
   DocumentMetadata,
+  RubricReference,
+  RubricReferences,
 } from "./odellTypes";
 import log from "./log";
 import { splitCommaSepValues } from "./util";
@@ -95,12 +97,41 @@ function parseMaterialReferences(
   };
 }
 
+function parseRubricReferences(
+  document: docs_v1.Schema$Document,
+  tableElement: docs_v1.Schema$Table
+) {
+  const rubrics: RubricReference[] = [];
+
+  for (const row of tableElement.tableRows.slice(2)) {
+    const rubricId = extractRawText(row.tableCells[0].content);
+    const url = extractRawText(row.tableCells[1].content);
+
+    if (rubricId.length === 0 || url.length === 0) {
+      continue;
+    }
+
+    rubrics.push({
+      rubric_id: rubricId,
+      url,
+    });
+  }
+
+  return {
+    rubrics,
+  };
+}
+
 function parseTable(
   document: docs_v1.Schema$Document,
   tableElement: docs_v1.Schema$Table
 ): MetadataTable {
   let type: MetadataTableType;
-  let metadata: DocumentMetadata | ActivityMetadata | MaterialReferences;
+  let metadata:
+    | DocumentMetadata
+    | ActivityMetadata
+    | MaterialReferences
+    | RubricReferences;
 
   const tableTitle = extractRawText(
     tableElement.tableRows[0].tableCells[0].content
@@ -121,6 +152,9 @@ function parseTable(
   } else if (tableTitle == "[materials]") {
     type = "materials";
     metadata = parseMaterialReferences(document, tableElement);
+  } else if (tableTitle == "rubrics") {
+    type = "rubric";
+    metadata = parseRubricReferences(document, tableElement);
   }
 
   if (type && metadata) {
@@ -224,6 +258,8 @@ export default async function parseDocument(
           );
         } else if (table.type == "document") {
           documentMetadata = table.metadata as DocumentMetadata;
+        } else if (table.type == "rubric") {
+          documentMetadata.rubrics = table.metadata as RubricReferences;
         }
       }
     }

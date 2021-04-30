@@ -1,10 +1,11 @@
-import { snakeCase, sortBy, uniq } from "lodash";
+import { snakeCase, sortBy } from "lodash";
 import { lessonPath, materialPath, unitPath } from "./paths";
 import {
   Activity,
   OdellDocument,
   MaterialReference,
   AssignmentOutcomeTypes,
+  RubricReference,
 } from "./odellTypes";
 import config from "./config";
 import { dasherize, splitCommaSepValues } from "./util";
@@ -147,7 +148,7 @@ const buildActivity = (
         `_rubric_${rubricId}.html`
       );
       activityJson["oer:gradingFormat"] = {
-        "@type": "asn:Rubric",
+        "@type": ["asn:Rubric", "Thing"],
         "@id": url,
         url: url,
       };
@@ -199,6 +200,43 @@ export function materialToOcx(
 
   return materialJson;
 }
+
+const buildRubric = (rubricRef: RubricReference) => {
+  return buildJsonLd(
+    "asn:Rubric",
+    {
+      "@id": rubricRef.rubric_id,
+      name: rubricRef.resolvedRubric.title,
+      "asn:hasCriterion": rubricRef.resolvedRubric.criterions.map(
+        (criterion) => {
+          const criterionId = `${rubricRef.rubric_id}_${criterion.title}`;
+          return buildJsonLd(
+            ["asn:RubricCriterion", "Thing"],
+            {
+              "@id": criterionId,
+              name: criterion.title,
+              description: criterion.description,
+              "asn:hasLevel": criterion.levels.map((level) =>
+                buildJsonLd(
+                  ["asn:CriterionLevel", "Thing"],
+                  {
+                    "@id": `${criterionId}_${level.points}`,
+                    "asn:benchmark": level.title,
+                    "asn:score": level.points,
+                    description: level.description,
+                  },
+                  false
+                )
+              ),
+            },
+            false
+          );
+        }
+      ),
+    },
+    false
+  );
+};
 
 const buildUnit = async (document: OdellDocument) => {
   const json = buildJsonLd("oer:Unit", {
@@ -266,6 +304,12 @@ const buildUnit = async (document: OdellDocument) => {
   );
 
   json.hasPart = activities.concat(lessonUrls);
+
+  if (document.metadata.rubrics) {
+    json["ocx:rubric"] = document.metadata.rubrics.rubrics.map((r) =>
+      buildRubric(r)
+    );
+  }
 
   return json;
 };

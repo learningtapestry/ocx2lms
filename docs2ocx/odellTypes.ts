@@ -1,3 +1,4 @@
+import { GCRubricSheet } from "./classroomTypes";
 export const DocumentMetadataKeys = {
   type: "type",
   grade: "grade",
@@ -64,6 +65,7 @@ export interface DocumentMetadata {
   lesson_description: string;
   lesson_look_fors: string;
   look_fors: string;
+  rubrics: RubricReferences;
 }
 
 export interface ActivityMetadata {
@@ -98,6 +100,16 @@ export interface MaterialReference {
   resolvedMaterial?: MaterialDocument;
 }
 
+export interface RubricReference {
+  rubric_id: string;
+  url: string;
+  resolvedRubric?: GCRubricSheet;
+}
+
+export interface RubricReferences {
+  rubrics: RubricReference[];
+}
+
 export interface StudentContent {
   content: string;
 }
@@ -118,10 +130,18 @@ export interface OdellDocument {
   activities: Activity[];
 }
 
-export type MetadataTableType = "document" | "activity" | "materials";
+export type MetadataTableType =
+  | "document"
+  | "activity"
+  | "materials"
+  | "rubric";
 
 export interface MetadataTable {
-  metadata: DocumentMetadata | ActivityMetadata | MaterialReferences;
+  metadata:
+    | DocumentMetadata
+    | ActivityMetadata
+    | MaterialReferences
+    | RubricReferences;
   type: MetadataTableType;
 }
 

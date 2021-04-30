@@ -3,6 +3,7 @@ import getGoogleClient from "./googleClient";
 import { findDocumentId } from "./lcmsQueries";
 import parseDocument from "./parseDocument";
 import parseMaterial from "./parseMaterial";
+import readRubricSheet from "./readRubricSheet";
 
 export async function readDocument(documentId) {
   const client = await getGoogleClient();
@@ -25,6 +26,16 @@ export async function readDocument(documentId) {
 
     for (const material of activity.materials) {
       material.resolvedMaterial = await readMaterialDocument(material.id);
+    }
+  }
+
+  if (lesson.metadata.rubrics) {
+    for (const rubric of lesson.metadata.rubrics.rubrics) {
+      const spreadsheetId = rubric.url
+        .trim()
+        .replace("https://docs.google.com/spreadsheets/d/", "")
+        .split("/")[0];
+      rubric.resolvedRubric = await readRubricSheet(spreadsheetId);
     }
   }
 

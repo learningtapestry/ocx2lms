@@ -88,6 +88,10 @@ The `oer:Unit` type describes a grouping of lessons.
 
   References matterials attached to the unit.
 
+- `ocx:rubric`
+
+  References rubrics attached to the unit.
+
 - `ocx:optionality`
 
   Whether the unit is optional.
@@ -408,9 +412,9 @@ The `oer:AssociatedMaterial` type represents a material associated with an educa
 
   The position for the level in the criterion.
 
-- `asn:qualityLabel`
+- `asn:benchmark`
 
-  Description for the achievement described by the level.
+  Description of a level of achievement in performance of a task defined by the criterion.
 
 - `asn:score`
 
