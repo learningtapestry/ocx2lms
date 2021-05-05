@@ -1,4 +1,4 @@
-import type { ClassroomData, CourseWork } from "src/types";
+import type { ClassroomData, CourseWork, Rubric } from "src/types";
 import { useState } from "react";
 import {
   Container,
@@ -16,6 +16,7 @@ import {
   useToast
 } from "@chakra-ui/react";
 import CourseWorkItem from "components/CourseWorkItem";
+import RubricItem from "components/RubricItem";
 import { postRequest } from "src/xhr";
 
 interface IProps {
@@ -57,8 +58,7 @@ const DataPreview = (props: IProps) => {
     }
   };
 
-  let { course, courseworks } = props.data;
-  let lastIndex = courseworks.length - 1;
+  let { course, courseworks, rubrics } = props.data;
 
   return (
     <>
@@ -89,7 +89,14 @@ const DataPreview = (props: IProps) => {
         </Flex>
         <Text color="white">{course.description}</Text>
         {courseworks.map((c: CourseWork, i: number) => (
-          <CourseWorkItem key={`${i}--${c.id}`} coursework={c} last={i === lastIndex} />
+          <CourseWorkItem
+            key={`${i}--${c.id}`}
+            coursework={c}
+            last={i === courseworks.length - 1 && !rubrics.length}
+          />
+        ))}
+        {rubrics.map((r: Rubric, i: number) => (
+          <RubricItem key={`${i}--${r["@id"]}`} rubric={r} last={i === rubrics.length - 1} />
         ))}
       </Container>
       <Modal isOpen={syncing} onClose={() => {}}>

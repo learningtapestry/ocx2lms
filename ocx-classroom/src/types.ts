@@ -85,9 +85,12 @@ interface ClassroomData {
   course: Course;
   courseworks: CourseWork[];
   topics: Topic[];
+  rubrics: Rubric[];
 }
 
 interface Topic extends classroom_v1.Schema$Topic {}
+
+interface Rubric extends GenericObject {}
 
 export type {
   AuthPayload,
@@ -99,6 +102,7 @@ export type {
   CourseWorkAssignment,
   Material,
   Topic,
+  Rubric,
   GenericObject,
   ClassroomData
 };

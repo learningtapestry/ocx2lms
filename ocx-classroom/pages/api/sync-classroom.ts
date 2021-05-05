@@ -4,8 +4,9 @@ import { getSession } from "next-auth/client";
 import { createAssignment, createCourse, createMaterial, createTopics } from "src/classroom";
 import { logError } from "src/utils";
 import protectedRoute from "src/protectedRoute";
-import { ClassroomData, CourseWork, Material, Session } from "src/types";
+import { ClassroomData, CourseWork, Material, Rubric, Session } from "src/types";
 import { createFolder, htmlToGoogleDoc } from "src/drive";
+import { ocxRubricToGoogleSheet } from "src/sheets";
 
 export default protectedRoute(async (req: NextApiRequest, res: NextApiResponse) => {
   let session = await getSession({ req });
@@ -23,8 +24,18 @@ export default protectedRoute(async (req: NextApiRequest, res: NextApiResponse) 
 
     let folderId = await createFolder(session, `Classroom-${course.name}`);
     let courseworks = await Promise.all(
-      data.courseworks.map(async (c) => await courseworkWithDocs(session, c, folderId))
+      data.courseworks.map(async (c) => {
+        return await courseworkWithDocs(session, c, folderId);
+      })
     );
+
+    if (data.rubrics?.length) {
+      await Promise.all(
+        data.rubrics.map(async (r) => {
+          return await generateRubric(session, r, folderId);
+        })
+      );
+    }
 
     for (let i = 0; i < courseworks.length; i++) {
       let cw = courseworks[i];
@@ -73,4 +84,16 @@ async function courseworkWithDocs(
     }
   }
   return { ...cw, materials };
+}
+
+async function generateRubric(session: Session, rubric: Rubric, folderId: string): Promise<string> {
+  let rubricId: string;
+  try {
+    rubricId = await ocxRubricToGoogleSheet(session, rubric, folderId);
+  } catch (err) {
+    console.log("Err rubric: ", rubric["@id"]);
+    console.log(err);
+    rubricId = "";
+  }
+  return rubricId;
 }
