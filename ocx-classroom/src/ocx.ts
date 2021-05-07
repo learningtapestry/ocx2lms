@@ -7,6 +7,7 @@ import type {
   Course,
   Material,
   Topic,
+  Rubric,
   CourseWork
 } from "src/types";
 
@@ -63,7 +64,7 @@ export class OcxToClassroomParser {
 
   async parse(): Promise<ClassroomData> {
     if (_.isEmpty(this.ocx)) {
-      return { course: null, courseworks: [], topics: [] };
+      return { course: null, courseworks: [], topics: [], rubrics: [] };
     }
 
     let course = this.buildCourse();
@@ -87,6 +88,12 @@ export class OcxToClassroomParser {
       .uniqBy("name")
       .value();
 
+    let rubrics = await Promise.all(
+      rubricsList(this.ocx).map(async (r) => {
+        return await this.buildRubric(r);
+      })
+    );
+
     // recur on subresources
     let subResources = await Promise.all(
       subResourcesList(this.ocx).map(async (url) => {
@@ -106,6 +113,9 @@ export class OcxToClassroomParser {
       if (d.topics?.length) {
         topics.push(...d.topics);
       }
+      if (d.rubrics?.length) {
+        rubrics.push(...d.rubrics);
+      }
     });
 
     // add Week topics to lessons
@@ -122,7 +132,7 @@ export class OcxToClassroomParser {
       });
     }
 
-    return { course, courseworks, topics };
+    return { course, courseworks, topics, rubrics };
   }
 
   private buildCourse(): Course {
@@ -312,6 +322,16 @@ export class OcxToClassroomParser {
     }
     return null;
   }
+
+  private async buildRubric(ocx: GenericObject): Promise<Rubric> {
+    if (!_.includes(ocx["@type"], "asn:Rubric")) return null;
+    if (!ocx.url?.startsWith("http")) return null;
+    let parser = new OcxToClassroomParser(ocx.url, this.options, this.level + 1);
+    await parser.fetchOcx();
+
+    if (_.isEmpty(parser.ocx)) return null;
+    return parser.ocx;
+  }
 }
 
 function ocxIdentifier(ocx: GenericObject): string {
@@ -333,6 +353,10 @@ function materialsList(ocx: GenericObject): GenericObject[] {
 
 function assignmentsList(ocx: GenericObject): GenericObject[] {
   return (ocx.hasPart || []).filter((o) => hasOcxType(o, "Activity"));
+}
+
+function rubricsList(ocx: GenericObject): GenericObject[] {
+  return ocx["ocx:rubric"] || [];
 }
 
 function subResourcesList(ocx: GenericObject): string[] {

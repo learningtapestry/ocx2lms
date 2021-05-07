@@ -1,9 +1,9 @@
-import type { Session } from "src/types";
+import type { Session, Rubric } from "src/types";
 import { google, sheets_v4 } from "googleapis";
 import { getAccessToken } from "src/authUtils";
 import { googleDrive } from "./drive";
 
-function rubricToCells(rubric: any) {
+export function rubricToCells(rubric: Rubric) {
   const cells: string[][] = [
     ["It is recommended that you do not edit rubrics in spreadsheet format"],
     ["v1.0-s"]
@@ -47,7 +47,7 @@ export async function googleSheets(session: Session) {
 
 export async function ocxRubricToGoogleSheet(
   session: Session,
-  rubric: any,
+  rubric: Rubric,
   folderId: string
 ): Promise<string> {
   const sheets = await googleSheets(session);
