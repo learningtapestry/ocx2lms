@@ -7,6 +7,7 @@ import {
   MaterialMetadataKeys,
   OcxDocument,
 } from "./odellTypes";
+import * as matchAll from "string.prototype.matchall";
 
 export default async function parseMaterial(
   document: docs_v1.Schema$Document,
@@ -77,10 +78,11 @@ function renderSyllabus(
     }
     sectionLessons[ocxMetadata.section].push(ocxDocument);
   }
-  const referencedSections = content.matchAll(
+  const referencedSections = matchAll(
+    content,
     /\[section-lesson-details: ([0-9a-zA-Z ]+)\]/g
   );
-  for (const match of referencedSections) {
+  for (const match of Array.from(referencedSections)) {
     const section = match[1].trim();
     let lessons = sectionLessons[section];
 
