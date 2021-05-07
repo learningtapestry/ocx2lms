@@ -177,7 +177,11 @@ export function materialToOcx(
   );
 
   const accessType = material?.accessType?.toLocaleLowerCase()?.trim();
-  if (["individual-submission", "shared-submission"].includes(accessType)) {
+  if (
+    ["individual-submission", "shared-submission", "view-only"].includes(
+      accessType
+    )
+  ) {
     materialJson["ocx:collaborationType"] = accessType;
   }
 
