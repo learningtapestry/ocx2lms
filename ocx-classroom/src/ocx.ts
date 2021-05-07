@@ -266,7 +266,10 @@ export class OcxToClassroomParser {
   }
 
   private async buildMaterial(m: GenericObject): Promise<Material | null> {
-    if (_.includes(m["ocx:collaborationType"], "submission")) {
+    if (
+      _.includes(m["ocx:collaborationType"], "submission") ||
+      _.includes(m["ocx:collaborationType"], "view-only")
+    ) {
       return await this.buildOcxGdoc(m);
     }
 
