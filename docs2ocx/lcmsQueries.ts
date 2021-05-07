@@ -80,12 +80,14 @@ export async function writeOcxDocument(
   }
 }
 
-export async function findDocumentIds() {
+export async function findDocuments() {
   const client = await getClient();
 
   try {
-    const result = await client.query(`SELECT file_id FROM documents`);
-    return result.rows.map((row) => row.file_id);
+    const result = await client.query(
+      `SELECT file_id, metadata ->> 'type' as type FROM documents`
+    );
+    return result.rows as { file_id: string; type: string }[];
   } catch (err) {
     return [];
   } finally {

@@ -2,6 +2,7 @@ import {
   OdellDocument,
   MaterialReference,
   RubricReference,
+  MaterialDocument,
 } from "./odellTypes";
 import { snakeCase } from "lodash";
 import { format } from "prettier";
@@ -15,7 +16,7 @@ const prettify = (content: string) => {
 };
 
 export function materialToHtml(
-  material: MaterialReference,
+  material: MaterialDocument,
   jsonLd: Record<string, any>
 ) {
   return prettify(`
@@ -28,7 +29,7 @@ export function materialToHtml(
     </head>
     <body>
       <section id="Material_${snakeCase(material.id.toLocaleLowerCase())}">
-        ${material.resolvedMaterial?.content?.content}
+        ${material.content?.content}
       </section>
     </body>
   </html>`);

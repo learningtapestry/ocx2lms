@@ -1,3 +1,4 @@
+import { HtmlMetadataKeys } from "./odellTypes";
 import documentContentToHtml from "./documentContentToHtml";
 import extractDocumentContent from "./extractDocumentContent";
 import { docs_v1 } from "googleapis";
@@ -37,8 +38,10 @@ export function parseKeyValueTable(
   const metadata = {};
 
   for (const row of tableRows) {
-    const key = extractRawText(row.tableCells[0].content);
-    const value = extractRawText(row.tableCells[1].content);
+    const key = extractRawText(row.tableCells[0].content).replace(/\s/g, "");
+    const value = HtmlMetadataKeys.includes(key)
+      ? extractHtml(document, row.tableCells[1].content)
+      : extractRawText(row.tableCells[1].content);
     const metadataKey = keyLookup[key];
 
     if (!metadataKey) {

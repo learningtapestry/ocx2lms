@@ -1,4 +1,7 @@
 import { GCRubricSheet } from "./classroomTypes";
+
+export const HtmlMetadataKeys = ["lesson-look-fors"];
+
 export const DocumentMetadataKeys = {
   type: "type",
   grade: "grade",
@@ -42,6 +45,7 @@ export const MaterialMetadataKeys = {
   access: "access",
   link: "link",
   "guidebook-type": "guidebook_type",
+  type: "type",
 };
 
 export type DocumentTypes = "material" | "lesson" | "unit" | "rubric";
@@ -137,6 +141,8 @@ export type MetadataTableType =
   | "materials"
   | "rubric";
 
+export type MaterialMetadataTableType = "UO" | "syllabus";
+
 export interface MetadataTable {
   metadata:
     | DocumentMetadata
@@ -149,6 +155,7 @@ export interface MetadataTable {
 export interface MaterialMetadata {
   identifier: string;
   title: string;
+  type: MaterialMetadataTableType;
   material_type:
     | "unit"
     | "text"
@@ -168,7 +175,28 @@ export interface MaterialContent {
 }
 
 export interface MaterialDocument {
+  id: string;
   documentId: string;
   metadata: MaterialMetadata;
   content: MaterialContent;
+}
+
+export interface OcxRubric {
+  rubric: RubricReference;
+  html: string;
+  ocx: Record<string, any>;
+}
+
+export interface OcxMaterial {
+  document: MaterialDocument;
+  html: string;
+  ocx: Record<string, any>;
+}
+
+export interface OcxDocument {
+  rubrics: OcxRubric[];
+  materials: OcxMaterial[];
+  document: OdellDocument;
+  html: string;
+  ocx: Record<string, any>;
 }

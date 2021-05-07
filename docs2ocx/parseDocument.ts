@@ -19,6 +19,7 @@ import {
   DocumentMetadata,
   RubricReference,
   RubricReferences,
+  OcxDocument,
 } from "./odellTypes";
 import log from "./log";
 import { splitCommaSepValues } from "./util";
@@ -174,7 +175,8 @@ function parseTable(
 }
 
 export default async function parseDocument(
-  document: docs_v1.Schema$Document
+  document: docs_v1.Schema$Document,
+  ocxLibrary: OcxDocument[] = null
 ): Promise<OdellDocument> {
   let documentMetadata: DocumentMetadata = null;
   const activities: Activity[] = [];

@@ -1,3 +1,4 @@
+import { OcxDocument } from "./odellTypes";
 import { docs_v1 } from "googleapis";
 import getGoogleClient from "./googleClient";
 import { findDocumentId } from "./lcmsQueries";
@@ -5,7 +6,10 @@ import parseDocument from "./parseDocument";
 import parseMaterial from "./parseMaterial";
 import readRubricSheet from "./readRubricSheet";
 
-export async function readDocument(documentId) {
+export async function readDocument(
+  documentId,
+  ocxLibrary: OcxDocument[] = null
+) {
   const client = await getGoogleClient();
   const docs = new docs_v1.Docs({ auth: client });
 
@@ -13,7 +17,7 @@ export async function readDocument(documentId) {
     documentId,
   });
   const document = getDocumentResponse.data;
-  const lesson = await parseDocument(document);
+  const lesson = await parseDocument(document, ocxLibrary);
 
   for (const activity of lesson.activities) {
     for (const textId of activity.metadata.textsAsMaterialIds) {
@@ -38,7 +42,10 @@ export async function readDocument(documentId) {
   return lesson;
 }
 
-export async function readMaterialDocument(materialId: string) {
+export async function readMaterialDocument(
+  materialId: string,
+  ocxLibrary: OcxDocument[] = null
+) {
   const documentId = await findDocumentId(materialId);
 
   if (!documentId) {
@@ -53,6 +60,7 @@ export async function readMaterialDocument(materialId: string) {
   });
 
   const document = getDocumentResponse.data;
-  const material = await parseMaterial(document);
+  const material = await parseMaterial(document, ocxLibrary);
+  material.id = materialId;
   return material;
 }

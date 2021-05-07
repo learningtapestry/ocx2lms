@@ -24,9 +24,10 @@ export default function documentContentToHtml(
 
     // Simple strings
     for (const text of texts) {
-      const textContent = elm[text];
+      const textContent = elm[text] as string;
+
       if (textContent) {
-        html.push(`<${text}>${textContent}</${text}>`);
+        html.push(`<${text}>${replaceTags(textContent)}</${text}>`);
         continue;
       }
     }
@@ -94,4 +95,8 @@ const buildTable = (table: DefaultConverters.TableInput) => {
   html.push("</tbody>");
   html.push("</table>");
   return html.join("\n");
+};
+
+const replaceTags = (str: string) => {
+  return str.replace("[page-break]", "<br />");
 };
