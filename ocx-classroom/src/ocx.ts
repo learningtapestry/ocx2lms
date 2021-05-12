@@ -10,6 +10,7 @@ import type {
   Rubric,
   CourseWork
 } from "src/types";
+import { clearStr } from "./utils";
 
 const jsonldSel = 'script[type="application/ld+json"]';
 const oerTypeRE = /oer:(.*)/;
@@ -38,7 +39,6 @@ export class OcxToClassroomParser {
     this.url = url.indexOf("http") !== 0 ? "http://" + url : url;
     this.level = level;
     this.options = options;
-    console.log(this.options);
   }
 
   async fetchAndParse(): Promise<ClassroomData> {
@@ -153,7 +153,7 @@ export class OcxToClassroomParser {
     }
 
     let desc = this.ocx.description || this.ocx.about;
-    course.description = _.trim(desc);
+    course.description = clearStr(desc);
 
     return course;
   }
@@ -182,7 +182,7 @@ export class OcxToClassroomParser {
         desc = (el.querySelector("article") || el)?.textContent;
       }
     }
-    cwMaterial.description = _.trim(desc);
+    cwMaterial.description = clearStr(desc);
 
     let material = await this.buildMaterial(ocx);
     if (material) {
@@ -228,7 +228,7 @@ export class OcxToClassroomParser {
         desc = (el.querySelector("article") || el)?.textContent;
       }
     }
-    cwAssignment.description = _.trim(desc);
+    cwAssignment.description = clearStr(desc);
 
     let material = await this.buildMaterial(ocx);
     if (material) {

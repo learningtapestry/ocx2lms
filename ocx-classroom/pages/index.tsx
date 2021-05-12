@@ -17,7 +17,6 @@ export default function Home({}) {
   let onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let options = { weeklyPace, defaultTime };
-    console.log(options);
     let parser = new OcxToClassroomParser(url, options);
     try {
       let newData = await parser.fetchAndParse();
